@@ -10,6 +10,75 @@
   <title>Todo List</title>
 </head>
 
+
+
+
+<?php
+//////////////////////////////////////
+
+//テンプレ
+define('DB_HOST', 'localhost'); //定数化
+
+$dsn = 'mysql:dbname=todolist;host='.DB_HOST.';charset=utf8mb4'; //utf8の指定が必要
+$user = 'root';
+$password = 'root';
+
+$dbh_json;
+$sql_json;
+try{
+  $dbh = new PDO($dsn, $user, $password);
+    $dbh_json = $dbh;
+
+    $sql = 'select * from todo';
+    $sql_json = $sql;
+    foreach ($dbh->query($sql) as $row) {
+        print($row['todoid'].',');
+        print($row['title']);
+        print('<br />');
+    }
+}catch (PDOException $e){
+    print('Error:'.$e->getMessage());
+    die();
+}
+
+$dbh = null;
+
+$dbh_json = json_encode($dbh_json);
+$sql_json = json_encode($sql_json);
+
+
+$postedData='';
+if($_SERVER['REQUEST_METHOD'] === 'POST'){
+
+    $postedData = $_POST['comment'];
+    $stmt = $dbh->prepare("INSERT INTO staffname (name) VALUES (:value)"); // $dbh already has staff
+    //$stmt->bindParam(':name', $name, PDO::PARAM_STR);
+    //$stmt->bindValue(':value', 1, PDO::PARAM_INT);
+    $stmt->bindValue(':value', $postedData, PDO::PARAM_STR);
+    $stmt->execute();
+  }
+
+$serverRequest_json = json_encode($_SERVER['REQUEST_METHOD']);
+$postedData_json = json_encode($postedData);
+
+$myPath = __FILE__;
+$basename = pathinfo($myPath, PATHINFO_BASENAME);
+
+////////////////////////////////////////
+?>
+
+
+<script type="text/javascript">
+    var serverRequest = JSON.parse('<?php echo $serverRequest_json; ?>');
+    console.log(serverRequest);
+
+    var postedData = JSON.parse('<?php echo $postedData_json; ?>');
+    console.log("$postedData : "+postedData);
+</script>
+
+
+
+
 <body class="layout-documentation page-layout has-navbar-fixed-top">
   <nav class="navbar is-fixed-top has-shadow" role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
