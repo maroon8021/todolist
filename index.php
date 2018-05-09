@@ -114,10 +114,32 @@ $basename = pathinfo($myPath, PATHINFO_BASENAME);
         A simple container to divide your page into <strong>sections</strong>, like the one you're currently reading
       </h2>
 
-      <form action = "/app/php/datapost.php" method = "post">
+      <form action = "/php/datapost.php" method = "post">
       <div class="field has-addons">
         <div class="control">
-          <input class="input" type="text" placeholder="Add your todo here">
+          <input class="input" type="text" name="newtodo" placeholder="Add your todo here">
+          <input type="hidden" name="url" value="../index.php">
+        </div>
+        <div class="control">
+          <button class="button is-link">Submit</button>
+        </div>
+      </div>
+      </form>
+
+      <form action = "/php/dbtest.php" method = "post">
+      <div class="field has-addons">
+        <div class="control">
+          <!--
+          <div class="select">
+            <select>
+              <option>Select dropdown</option>
+              <option>With options</option>
+            </select>
+          </div>
+        -->
+        <input class="input" type="text" name="deletetodo" placeholder="Add your todo to delete">
+
+          <input type="hidden" name="url" value="../index.php">
         </div>
         <div class="control">
           <button class="button is-link">Submit</button>

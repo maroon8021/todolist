@@ -2,7 +2,7 @@
 
 define('DB_HOST', 'localhost'); //定数化
 
-$dsn = 'mysql:dbname=staff;host='.DB_HOST.';charset=utf8mb4'; //utf8の指定が必要
+$dsn = 'mysql:dbname=todolist;host='.DB_HOST.';charset=utf8mb4'; //utf8の指定が必要
 $user = 'root';
 $password = 'root';
 
@@ -13,11 +13,11 @@ try{
 	$dbh = new PDO($dsn, $user, $password);
     $dbh_json = $dbh;
 
-    $sql = 'select * from staffname';
+    $sql = 'select * from todo';
     $sql_json = $sql;
     foreach ($dbh->query($sql) as $row) {
-        print($row['id'].',');
-        print($row['name']);
+        print($row['todoid'].',');
+        print($row['title']);
         print('<br />');
     }
 }catch (PDOException $e){
@@ -30,9 +30,9 @@ $postedData='';
 $pathDate;
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
-    $postedData = $_POST['comment'];
+    $postedData = $_POST['newtodo'];
     $pathDate = $_POST['url'];
-    $stmt = $dbh->prepare("INSERT INTO staffname (name) VALUES (:value)"); // $dbh already has staff
+    $stmt = $dbh->prepare("INSERT INTO todo (title) VALUES (:value)"); // $dbh already has staff
     //$stmt->bindParam(':name', $name, PDO::PARAM_STR);
     //$stmt->bindValue(':value', 1, PDO::PARAM_INT);
     $stmt->bindValue(':value', $postedData, PDO::PARAM_STR);
@@ -48,7 +48,7 @@ $basename_json = json_encode($basename);
 http_response_code( 301 ) ;
 
 // リダイレクト
-header( "Location:".$pathDate ) ;
+//header( "Location:".$pathDate ) ;
 exit ;
 
 ?>
