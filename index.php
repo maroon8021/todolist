@@ -137,7 +137,7 @@ $basename = pathinfo($myPath, PATHINFO_BASENAME);
             </select>
           </div>
         -->
-        <input class="input" type="text" name="deletetodo" placeholder="Add your todo to delete">
+        <input class="input" type="text" name="deletetodoid" placeholder="Add your todo to delete">
 
           <input type="hidden" name="url" value="../index.php">
         </div>

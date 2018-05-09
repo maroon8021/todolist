@@ -46,7 +46,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
 http_response_code( 301 ) ;
 
 // リダイレクト
-header( "Location:".$pathDate ) ;
+//header( "Location:".$pathDate ) ;
 
 $dbh = null;
 
