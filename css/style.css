@@ -1,11 +1,6 @@
-.main-area.day-time{
-	background: url('../img/day-time.jpg') center / cover;
-}
-
-.main-area.night-time{
-	background: url('../img/night-time.jpg') center / cover;
-}
-
-.main-area .mdl-layout__header{
-	color: white;
+.input-transparent{
+  border-color: #fff;
+  border: 1px solid transparent;
+  /*height: 38px;*/
+  width: 100%;
 }
