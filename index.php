@@ -191,11 +191,13 @@ $basename = pathinfo($myPath, PATHINFO_BASENAME);
         </thead>
         <tbody>
           <tr>
-            <th><a class="button is-rounded is-success">
-              <span class="icon is-small">
-                <i class="fas fa-check"></i>
-              </span>
-            </a></th>
+            <th>
+              <a class="button is-rounded is-success">
+                <span class="icon is-small">
+                  <i class="fas fa-check"></i>
+                </span>
+              </a>
+            </th>
             <td><a class="button is-success">
               <span class="icon is-small">
                 <i class="fas fa-check"></i>
