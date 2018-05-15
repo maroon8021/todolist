@@ -9,6 +9,10 @@ var onClickEvent = function (e) {
   alert('click!!***');
 }
 
+var onClickButton = function (e) {
+  alert('Button is clicked');
+}
+
 var onChangeEvent = function (e) {
   let params = new URLSearchParams();
   params.append('newtodo', e.target.value);
@@ -50,6 +54,29 @@ var input = Vue.extend({
 })
 
 Vue.component('t-input', input);
+
+
+var checkButton = Vue.extend({
+  props:{
+    placeholder: {
+      type: String,
+      default: "Add your todo to delete"
+    }
+  },
+
+  template:'<a class="button is-rounded is-success" ' +
+           'v-on:click="onClick"> ' +
+           '<span class="icon is-small"> ' +
+           '<i class="fas fa-check"></i> ' +
+           '</span> ' +
+           '</a>',
+
+  methods: {
+    onClick: onClickButton
+  }
+})
+
+Vue.component('check-button', checkButton);
 
 
 var app = new Vue({
