@@ -137,7 +137,28 @@ $basename = pathinfo($myPath, PATHINFO_BASENAME);
             </select>
           </div>
         -->
-        <input class="input" type="text" name="deletetodo" placeholder="Add your todo to delete">
+        <input class="input" type="text" name="deletetodoid" placeholder="Add your todo to delete">
+
+          <input type="hidden" name="url" value="../index.php">
+        </div>
+        <div class="control">
+          <button class="button is-link">Submit</button>
+        </div>
+      </div>
+      </form>
+
+      <form action = "/php/dbupdate.php" method = "post">
+      <div class="field has-addons">
+        <div class="control">
+          <!--
+          <div class="select">
+            <select>
+              <option>Select dropdown</option>
+              <option>With options</option>
+            </select>
+          </div>
+        -->
+        <input class="input" type="text" name="updatetodocontent" placeholder="Add your todo to delete">
 
           <input type="hidden" name="url" value="../index.php">
         </div>
@@ -152,10 +173,57 @@ $basename = pathinfo($myPath, PATHINFO_BASENAME);
 
   <section class="section">
     <div class="container">
+      <h1 class="title">What you have to do</h1>
+      <h2 class="subtitle">
+        This is main todo list you need to do
+      </h2>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th></th>
+            <th></th>
+            <!--
+            <th><abbr title="Position">Check</abbr></th>
+            <th>Content</th>
+          -->
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th><a class="button is-rounded is-success">
+              <span class="icon is-small">
+                <i class="fas fa-check"></i>
+              </span>
+            </a></th>
+            <td><a class="button is-success">
+              <span class="icon is-small">
+                <i class="fas fa-check"></i>
+              </span>
+              <span>Save</span>
+            </a></td>
+          </tr>
+        <tr>
+          <th>2</th>
+          <td><a href="https://en.wikipedia.org/wiki/Arsenal_F.C." title="Arsenal F.C.">ArsenalArsenalArsenalArsenalArsenalArsenalArsenal</a></td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+</section>
+
+  <section class="section">
+    <div class="container">
+      <h1 class="title">Today's time list</h1>
+      <h2 class="subtitle">
+        Today's plan and do
+      </h2>
+
       <table class="table">
   <thead>
     <tr>
-      <th><abbr title="Position">Cleared</abbr></th>
+      <th><abbr title="Position">Check</abbr></th>
       <th>Content</th>
     </tr>
   </thead>
@@ -196,6 +264,16 @@ $basename = pathinfo($myPath, PATHINFO_BASENAME);
       <td><a href="https://en.wikipedia.org/wiki/Arsenal_F.C." title="Arsenal F.C.">ArsenalArsenalArsenalArsenalArsenalArsenalArsenal</a></td>
     </tr>
 
+    <tr>
+      <th>3</th>
+      <td><t-input id="t-input-1" ></td>
+    </tr>
+
+    <tr>
+      <th>4</th>
+      <td><t-input id="t-input-2" placeholder="test render" v-on:click="onClick2"></td>
+    </tr>
+
   </tbody>
 </table>
     </div>
@@ -209,6 +287,7 @@ $basename = pathinfo($myPath, PATHINFO_BASENAME);
 
 <link rel="stylesheet" href="css/bulma-0.7.1/css/bulma.css">
 <link rel="stylesheet" href="css/style.css">
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="js/vue.js"></script>
 <script src="js/index.js"></script>
 <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>

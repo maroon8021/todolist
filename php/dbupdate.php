@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
-	<title>DB接続テスト</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <title>DB接続テスト</title>
 </head>
 <body>
 
@@ -15,7 +15,7 @@ $password = 'root';
 
 $dbh;
 try{
-	$dbh = new PDO($dsn, $user, $password);
+    $dbh = new PDO($dsn, $user, $password);
     $dbh_json = $dbh;
 
     $sql = 'select * from todo';
@@ -33,12 +33,13 @@ try{
 $postedData='';
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
-    $postedId = $_POST['deletetodoid'];
-    $sql = 'DELETE from todo where todoid = :delete_id';
+    $postedContent = $_POST['updatetodocontent'];
+    $sql = 'UPDATE todo set title = :new_title where todoid = :delete_id';
     $stmt = $dbh->prepare($sql); // $dbh already has staff
     //$stmt->bindParam(':name', $name, PDO::PARAM_STR);
     //$stmt->bindValue(':value', 1, PDO::PARAM_INT);
-    $stmt->bindValue(':delete_id', $postedId, PDO::PARAM_STR);
+    $stmt->bindValue(':new_title', $postedContent, PDO::PARAM_STR);
+    $stmt->bindValue(':delete_id', "4", PDO::PARAM_STR);
     $stmt->execute();
   }
 
