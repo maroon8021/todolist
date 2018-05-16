@@ -11,6 +11,7 @@ var onClickEvent = function (e) {
 
 var onClickButton = function (e) {
   alert('Button is clicked');
+  this.isSuccess = true;
 }
 
 var onChangeEvent = function (e) {
@@ -57,14 +58,27 @@ Vue.component('t-input', input);
 
 
 var checkButton = Vue.extend({
+  data: function(){
+    return {
+      isSuccess: false
+    }
+  },
   props:{
     placeholder: {
       type: String,
       default: "Add your todo to delete"
     }
   },
+  computed: {
+    classObject: function(){
+      return {
+        'is-success': this.isSuccess === true
+      }
+    }
+  },
 
-  template:'<a class="button is-rounded is-success" ' +
+  template:'<a class="button is-rounded" ' +
+           'v-bind:class="classObject" ' + //v-bind can be removed
            'v-on:click="onClick"> ' +
            '<span class="icon is-small"> ' +
            '<i class="fas fa-check"></i> ' +
@@ -96,4 +110,8 @@ var app = new Vue({
 });
     },
   },
+})
+
+var app = new Vue({
+  el: '#checkbutton1'
 })
