@@ -93,6 +93,24 @@ var checkButton = Vue.extend({
 Vue.component('check-button', checkButton);
 
 
+
+var customList = Vue.extend({
+  props:{
+    placeholder: {
+      type: String,
+      default: "Add your todo to delete"
+    }
+  },
+
+  template:'<tr> ' +
+           '<tr> ' +
+           '</tr>',
+ })
+
+Vue.component('custom-list', customList);
+
+
+
 var app = new Vue({
   el: '#t-input-1',
   methods: {

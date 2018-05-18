@@ -192,15 +192,9 @@ $basename = pathinfo($myPath, PATHINFO_BASENAME);
         <tbody>
           <tr>
             <th>
-              <!--
-              <a class="button is-rounded is-success">
-                <span class="icon is-small">
-                  <i class="fas fa-check"></i>
-                </span>
-              </a>
-            -->
             <check-button id="checkbutton1" />
             </th>
+
             <td><a class="button is-success">
               <span class="icon is-small">
                 <i class="fas fa-check"></i>
@@ -208,6 +202,7 @@ $basename = pathinfo($myPath, PATHINFO_BASENAME);
               <span>Save</span>
             </a></td>
           </tr>
+
         <tr>
           <th>2</th>
           <td><a href="https://en.wikipedia.org/wiki/Arsenal_F.C." title="Arsenal F.C.">ArsenalArsenalArsenalArsenalArsenalArsenalArsenal</a></td>
