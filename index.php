@@ -23,7 +23,7 @@ $dsn = 'mysql:dbname=todolist;host='.DB_HOST.';charset=utf8mb4'; //utf8の指定
 $user = 'root';
 $password = 'root';
 
-$dbh_json;
+$dbh_json = array();
 $sql_json;
 try{
   $dbh = new PDO($dsn, $user, $password);
@@ -31,19 +31,30 @@ try{
 
     $sql = 'select * from todo';
     $sql_json = $sql;
+
     foreach ($dbh->query($sql) as $row) {
         print($row['todoid'].',');
         print($row['title']);
         print('<br />');
+    }
+
+
+    $prepared = $dbh->prepare($sql);
+    $prepared->execute();
+    $dbh_json = $prepared->fetchAll();
+
+    $newArray = array();
+    foreach ($dbh_json as $arr) {
+      array_push($newArray, array($arr['todoid'] => $arr['title']));
     }
 }catch (PDOException $e){
     print('Error:'.$e->getMessage());
     die();
 }
 
-$dbh = null;
-
-$dbh_json = json_encode($dbh_json);
+//$dbh = null;
+$dbh_json = json_encode($newArray);
+print($dbh_json);
 $sql_json = json_encode($sql_json);
 
 
@@ -69,11 +80,15 @@ $basename = pathinfo($myPath, PATHINFO_BASENAME);
 
 
 <script type="text/javascript">
-    var serverRequest = JSON.parse('<?php echo $serverRequest_json; ?>');
-    console.log(serverRequest);
+  var serverRequest = JSON.parse('<?php echo $serverRequest_json; ?>');
+  console.log(serverRequest);
 
-    var postedData = JSON.parse('<?php echo $postedData_json; ?>');
-    console.log("$postedData : "+postedData);
+  var postedData = JSON.parse('<?php echo $dbh_json; ?>');
+  console.log("$postedData : "+postedData);
+  console.log(postedData);
+
+  // Data Getter
+
 </script>
 
 
@@ -279,19 +294,35 @@ $basename = pathinfo($myPath, PATHINFO_BASENAME);
     </div>
   </section>
 
+  <section class="section">
+    <div class="container">
+      <h1 class="title">Today's time list</h1>
+      <h2 class="subtitle">Today's plan and do</h2>
+      <table class="table" id="task-list-table">
+        <thead>
+          <tr>
+            <th><abbr title="Position">Check</abbr></th>
+            <th>Content</th>
+          </tr>
+        </thead>
+        <custom-list id="test-list" lists="postedData" hoge="hogehogehoge" is-checkbutton="true" />
+      </table>
+    </div>
+  </section>
+
 </main>
 
 
 
 
 
-<link rel="stylesheet" href="css/bulma-0.7.1/css/bulma.css">
+
 <link rel="stylesheet" href="css/style.css">
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="js/vue.js"></script>
 <script src="js/index.js"></script>
 <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
-
+<link rel="stylesheet" href="css/bulma-0.7.1/css/bulma.css">
 
 </body>
 
