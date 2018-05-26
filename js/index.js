@@ -63,12 +63,6 @@ var checkButton = Vue.extend({
       isSuccess: false
     }
   },
-  props:{
-    placeholder: {
-      type: String,
-      default: "Add your todo to delete"
-    }
-  },
   computed: {
     classObject: function(){
       return {
@@ -76,6 +70,7 @@ var checkButton = Vue.extend({
       }
     }
   },
+  name: 'check-button',
 
   template:'<a class="button is-rounded" ' +
            'v-bind:class="classObject" ' + //v-bind can be removed
@@ -91,6 +86,59 @@ var checkButton = Vue.extend({
 })
 
 Vue.component('check-button', checkButton);
+
+
+
+var customList = Vue.extend({
+  props:{
+    lists: {
+      type: String,
+      default: null
+    },
+    hoge: {
+      type: String,
+      default: "hugahuga"
+    },
+    isCheckbutton: {
+      type: String,
+      default: false
+    },
+    listType: {
+      type: String,
+      default: null
+    }
+  },
+
+  computed: {
+    isNotCheckbutton: function(){
+      return !this.isCheckbutton
+    },
+    showCheckbutton: function(){
+      return this.isCheckbutton === 'true' ? true : false
+    }
+  },
+
+  template:'<tbody> ' +
+           '<tr v-for="list in lists"> ' +
+           '<th> ' +
+           '<keep-alive>' +
+           '<component :is="check-button"/>' +
+           /*
+           '<check-button id="checkbutton1" :is="showCheckbutton"/>' +*/
+           '</keep-alive>' +
+           /*
+           '<span is="isNotCheckbutton">なんかここは動的に入るようにしたい</span> ' +
+           */
+           '{{ hoge }} ' +
+           '</th> ' +
+           '<td> ' +
+           '<t-input id="t-input-1"/>' +
+           '</td> ' +
+           '</tr>' +
+           '</tbody> ',
+ })
+
+Vue.component('custom-list', customList);
 
 
 var app = new Vue({
@@ -114,4 +162,11 @@ var app = new Vue({
 
 var app = new Vue({
   el: '#checkbutton1'
+})
+
+var $table = document.getElementById("task-list-table");
+var $customList = document.getElementById("test-list");
+$table.appendChild($customList);
+var app = new Vue({
+  el: '#test-list'
 })
