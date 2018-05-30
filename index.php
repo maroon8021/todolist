@@ -89,6 +89,20 @@ $basename = pathinfo($myPath, PATHINFO_BASENAME);
 
   // Data Getter
 
+  var timeRange = [
+  '10:00 ~ 11:00',
+  '11:00 ~ 12:00',
+  '12:00 ~ 13:00',
+  '13:00 ~ 14:00',
+  '14:00 ~ 15:00',
+  '15:00 ~ 16:00',
+  '16:00 ~ 17:00',
+  '17:00 ~ 18:00',
+  '18:00 ~ 19:00',
+  '19:00 ~ 20:00',
+  '20:00 ~ 21:00'
+  ];
+
 </script>
 
 
@@ -296,8 +310,8 @@ $basename = pathinfo($myPath, PATHINFO_BASENAME);
 
   <section class="section">
     <div class="container">
-      <h1 class="title">Today's time list</h1>
-      <h2 class="subtitle">Today's plan and do</h2>
+      <h1 class="title">Task list</h1>
+      <h2 class="subtitle">What I have to do</h2>
       <table class="table" id="task-list-table">
         <thead>
           <tr>
@@ -305,7 +319,31 @@ $basename = pathinfo($myPath, PATHINFO_BASENAME);
             <th>Content</th>
           </tr>
         </thead>
-        <custom-list id="test-list" lists="postedData" hoge="hogehogehoge" is-checkbutton="true" />
+        <custom-list id="test-list" lists="postedData">
+          <template slot-scope="checkbutton">
+            <check-button id="checkbutton1" />
+          </template>
+        </custom-list>
+      </table>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h1 class="title">Today's time list</h1>
+      <h2 class="subtitle">Today's plan and do</h2>
+      <table class="table" id="time-range-list-table">
+        <thead>
+          <tr>
+            <th><abbr title="Position">time range</abbr></th>
+            <th>Content</th>
+          </tr>
+        </thead>
+        <custom-list id="time-range-list" lists="timeRange">
+          <template slot-scope="checkbutton">
+            <time-range id="time-range-item" listindex="checkbutton"/>
+          </template>
+        </custom-list>
       </table>
     </div>
   </section>

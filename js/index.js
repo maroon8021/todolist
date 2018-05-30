@@ -87,6 +87,21 @@ var checkButton = Vue.extend({
 
 Vue.component('check-button', checkButton);
 
+var timeRange = Vue.extend({
+  props:{
+    listindex: {
+      type: Number,
+      default: 'huga'
+    }
+  },
+  template:'<span class="tag is-light is-medium"> ' +
+            'hoge'+
+            '{{ listindex }}'+
+           '</span> '
+})
+
+Vue.component('time-range', timeRange);
+
 
 
 var customList = Vue.extend({
@@ -95,41 +110,16 @@ var customList = Vue.extend({
       type: String,
       default: null
     },
-    hoge: {
-      type: String,
-      default: "hugahuga"
-    },
-    isCheckbutton: {
-      type: String,
-      default: false
-    },
     listType: {
       type: String,
       default: null
     }
   },
 
-  computed: {
-    isNotCheckbutton: function(){
-      return !this.isCheckbutton
-    },
-    showCheckbutton: function(){
-      return this.isCheckbutton === 'true' ? true : false
-    }
-  },
-
   template:'<tbody> ' +
-           '<tr v-for="list in lists"> ' +
+           '<tr v-for="(list, index) in lists"> ' +
            '<th> ' +
-           '<keep-alive>' +
-           '<component :is="check-button"/>' +
-           /*
-           '<check-button id="checkbutton1" :is="showCheckbutton"/>' +*/
-           '</keep-alive>' +
-           /*
-           '<span is="isNotCheckbutton">なんかここは動的に入るようにしたい</span> ' +
-           */
-           '{{ hoge }} ' +
+           '<slot slot-scope="checkbutton" list-index="index"></slot> ' + //@bind:list="list"
            '</th> ' +
            '<td> ' +
            '<t-input id="t-input-1"/>' +
@@ -164,9 +154,22 @@ var app = new Vue({
   el: '#checkbutton1'
 })
 
+
 var $table = document.getElementById("task-list-table");
 var $customList = document.getElementById("test-list");
 $table.appendChild($customList);
+
+var $table = document.getElementById("time-range-list-table");
+var $customList = document.getElementById("time-range-list");
+$table.appendChild($customList);
 var app = new Vue({
   el: '#test-list'
+})
+
+var app = new Vue({
+  el: '#time-range-list'
+})
+
+var app = new Vue({
+  el: '#time-range-item'
 })
