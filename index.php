@@ -16,6 +16,20 @@
 <?php
 //////////////////////////////////////
 
+$timeRangeConst = array(
+  '10:00 ~ 11:00',
+  '11:00 ~ 12:00',
+  '12:00 ~ 13:00',
+  '13:00 ~ 14:00',
+  '14:00 ~ 15:00',
+  '15:00 ~ 16:00',
+  '16:00 ~ 17:00',
+  '17:00 ~ 18:00',
+  '18:00 ~ 19:00',
+  '19:00 ~ 20:00',
+  '20:00 ~ 21:00'
+);
+
 //テンプレ
 define('DB_HOST', 'localhost'); //定数化
 
@@ -45,7 +59,34 @@ try{
 
     $newArray = array();
     foreach ($dbh_json as $arr) {
-      array_push($newArray, array($arr['todoid'] => $arr['title']));
+      array_push($newArray, array(
+        'key' => $arr['todoid'],
+        'value' => $arr['title']
+      ));
+    }
+}catch (PDOException $e){
+    print('Error:'.$e->getMessage());
+    die();
+}
+
+$timeRange_json = array();
+
+try{
+  $dbh = new PDO($dsn, $user, $password);
+
+    $sql = 'select * from schedule';
+
+    $prepared = $dbh->prepare($sql);
+    $prepared->execute();
+    $timeRange_json = $prepared->fetchAll();
+
+    $newArrayTimeRange = array();
+    foreach ($timeRange_json as $key => $arr) {
+      array_push($newArrayTimeRange, array(
+        'key' => $arr['scheduleid'],
+        'value' => $arr['title'],
+        'timeRange' => $timeRangeConst[$key]
+      ));
     }
 }catch (PDOException $e){
     print('Error:'.$e->getMessage());
@@ -54,6 +95,7 @@ try{
 
 //$dbh = null;
 $dbh_json = json_encode($newArray);
+$timeRange_json = json_encode($newArrayTimeRange);
 print($dbh_json);
 $sql_json = json_encode($sql_json);
 
@@ -84,12 +126,14 @@ $basename = pathinfo($myPath, PATHINFO_BASENAME);
   console.log(serverRequest);
 
   var postedData = JSON.parse('<?php echo $dbh_json; ?>');
+  var timeRangeArray = JSON.parse('<?php echo $timeRange_json; ?>');
   console.log("$postedData : "+postedData);
   console.log(postedData);
-
+  console.log(timeRangeArray)
   // Data Getter
 
-  var timeRange = [
+/*
+  var timeRangeArray = [
   '10:00 ~ 11:00',
   '11:00 ~ 12:00',
   '12:00 ~ 13:00',
@@ -102,6 +146,13 @@ $basename = pathinfo($myPath, PATHINFO_BASENAME);
   '19:00 ~ 20:00',
   '20:00 ~ 21:00'
   ];
+  */
+
+  /**
+  [
+  {key:11, value:-title-, }
+  ]
+  */
 
 </script>
 
@@ -319,11 +370,16 @@ $basename = pathinfo($myPath, PATHINFO_BASENAME);
             <th>Content</th>
           </tr>
         </thead>
-        <custom-list id="test-list" lists="postedData">
-          <template slot-scope="checkbutton">
-            <check-button id="checkbutton1" />
-          </template>
-        </custom-list>
+        <tbody id="test-list" v-on:keyup.enter="console">
+          <tr v-for="data in postedData">
+            <th>
+              <check-button />
+            </th>
+            <td class="input-area">
+              <t-input :target-id="data.key" :value="data.value" />
+            </td>
+          </tr>
+        </tbody>
       </table>
     </div>
   </section>
@@ -339,11 +395,23 @@ $basename = pathinfo($myPath, PATHINFO_BASENAME);
             <th>Content</th>
           </tr>
         </thead>
+        <tbody id="time-range-list">
+          <tr v-for="(pertime, index) in timeRangeArray">
+            <th>
+              <time-range :timestr="pertime.timeRange"/>
+            </th>
+            <td class="input-area">
+              <t-input :target-id="pertime.key" :value="pertime.value"/>
+            </td>
+          </tr>
+        </tbody>
+        <!--
         <custom-list id="time-range-list" lists="timeRange">
           <template slot-scope="checkbutton">
             <time-range id="time-range-item" listindex="checkbutton"/>
           </template>
         </custom-list>
+      -->
       </table>
     </div>
   </section>
