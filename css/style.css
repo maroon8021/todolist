@@ -4,3 +4,13 @@
   /*height: 38px;*/
   width: 100%;
 }
+
+.input-area{
+  max-width: 100%;
+  width: 900px;
+}
+
+/*
+td :     max-width: 100%;
+    width: 900px;;
+*/
