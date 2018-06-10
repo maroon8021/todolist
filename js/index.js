@@ -10,18 +10,40 @@ var onClickEvent = function (e) {
 }
 
 var onClickButton = function (e) {
-  alert('Button is clicked');
-  this.isSuccess = true;
+  let inputKey = this.$el.getAttribute('data-input-key');
+  let params = new URLSearchParams();
+  this.isSuccess = !this.isSuccess;
+  params.append('isfiniched', this.isSuccess ? true : false);
+  params.append('updateid', inputKey);
+  axios.post('/php/dbupdate.php', params).then(response => {
+    console.log(response.status);
+    console.log(response);
+  });
+
 }
 
 var onChangeEvent = function (e) {
   let params = new URLSearchParams();
-  params.append('newtodo', e.target.value);
-  axios.post('/php/datapostaxios.php', params).then(response => {
+  let targetURL;
+  let inputKey = e.target.getAttribute('data-input-key');
+  if(e.target.value === ''){
+    params.append('deletetodoid', inputKey);
+    targetURL = '/php/dbtest.php';
+  }else{
+    for (let index = 0; index < postedData.length; index++) {
+      if(inputKey === postedData[index].key && e.target.value === postedData[index].value){
+        return;
+      } 
+    }
+    params.append('newtodo', e.target.value);
+    targetURL = '/php/datapostaxios.php';
+  }
+  axios.post(targetURL, params).then(response => {
     console.log(response.status);
     console.log(response);
   });
 }
+
 
 var input = Vue.extend({
   props:{
@@ -53,19 +75,19 @@ var input = Vue.extend({
   },*/
 
   template:'<input ' +
-           'class="input-transparent" ' +
+           'class="input-transparent input-area" ' +
            'type="text" ' +
            'name="deletetodo" ' +
            ':data-input-key="targetId" ' +
            ':data-time-range="data" ' +
            ':placeholder="placeholder" '+
            ':value="value" '+
-           'v-on:click="onClick" '+
+           //'v-on:click="onClick" '+
            'v-on:change="onChange" '+
            '/>',
 
   methods: {
-    onClick: onClickEvent,
+    //onClick: onClickEvent,
     onChange: onChangeEvent,
   }
   /*
@@ -87,6 +109,12 @@ var checkButton = Vue.extend({
       isSuccess: false
     }
   },
+  props:{
+    targetId: {
+      type: String,
+      default: null
+    }
+  },
   computed: {
     classObject: function(){
       return {
@@ -97,6 +125,7 @@ var checkButton = Vue.extend({
   name: 'check-button',
 
   template:'<a class="button is-rounded" ' +
+           ':data-input-key="targetId" ' +
            'v-bind:class="classObject" ' + //v-bind can be removed
            'v-on:click="onClick"> ' +
            '<span class="icon is-small"> ' +
@@ -216,9 +245,33 @@ var app = new Vue({
   },
   methods: {
     console: function(e){
-      console.log("this is clicked on app")
+      console.log("this is clicked on app");
+    },
+    onEnterLastInput: function(e){
+      let $inputs = this.$el.getElementsByClassName('input-area');
+      let $lastInput = $inputs[$inputs.length - 1];
+      if( $lastInput === e.target){
+        let inputKey = parseInt(e.target.getAttribute('data-input-key'), 10);
+        this.$set(this.postedData, this.postedData.length, {key: String(inputKey + 1), value: ''});
+      }
+      console.log("this is Enter on app");
+    },
+    onDelete: function(e){
+      if(e.target.value === ''){
+        let inputKey = e.target.getAttribute('data-input-key');
+        for (let index = 0; index < this.postedData.length; index++) {
+          const data = this.postedData[index];
+          if(data.key === inputKey){
+            this.$delete(this.postedData, String(index));
+            onChangeEvent(e);
+          } 
+        }
+      }
     }
-  }
+  },
+  mounted: function(){
+    //this.$set(this.postedData, this.postedData.length, {key: 'testKey', value: 'testValue'});
+  },
 })
 
 

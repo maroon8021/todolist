@@ -33,13 +33,24 @@ try{
 $postedData='';
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
-    $postedContent = $_POST['updatetodocontent'];
-    $sql = 'UPDATE todo set title = :new_title where todoid = :delete_id';
+    $updateId = $_POST['updateid'];
+    $isFiniched = $_POST['isfiniched'];
+    $updateContent = $_POST['updateContent'];
+    print($updateId);
+    print($isFiniched);
+    print($updateContent);
+    if(!is_null($isFiniched)){
+        $sql = 'UPDATE todo set isfiniched = :is_finished where todoid = :update_id';
+    }else if(!is_null($updateContent)){
+        $sql = 'UPDATE todo set title = :updateContent where todoid = :update_id';
+    }
+    print($sql);
     $stmt = $dbh->prepare($sql); // $dbh already has staff
     //$stmt->bindParam(':name', $name, PDO::PARAM_STR);
     //$stmt->bindValue(':value', 1, PDO::PARAM_INT);
-    $stmt->bindValue(':new_title', $postedContent, PDO::PARAM_STR);
-    $stmt->bindValue(':delete_id', "4", PDO::PARAM_STR);
+    $stmt->bindValue(':update_id', $updateId, PDO::PARAM_INT);
+    $stmt->bindValue(':is_finished', $postedContent, PDO::PARAM_BOOL);
+    $stmt->bindValue(':updateContent', $updateContent, PDO::PARAM_STR);
     $stmt->execute();
   }
 

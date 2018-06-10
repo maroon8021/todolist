@@ -43,7 +43,7 @@ try{
   $dbh = new PDO($dsn, $user, $password);
     $dbh_json = $dbh;
 
-    $sql = 'select * from todo';
+    $sql = 'select * from todo where isfinished IS false';
     $sql_json = $sql;
 
     foreach ($dbh->query($sql) as $row) {
@@ -370,7 +370,7 @@ $basename = pathinfo($myPath, PATHINFO_BASENAME);
             <th>Content</th>
           </tr>
         </thead>
-        <tbody id="test-list" v-on:keyup.enter="console">
+        <tbody id="test-list" v-on:keyup.enter="onEnterLastInput" @keydown.delete="onDelete" >
           <tr v-for="data in postedData">
             <th>
               <check-button />
