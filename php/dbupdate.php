@@ -20,11 +20,6 @@ try{
 
     $sql = 'select * from todo';
     $sql_json = $sql;
-    foreach ($dbh->query($sql) as $row) {
-        print($row['todoid'].',');
-        print($row['title']);
-        print('<br />');
-    }
 }catch (PDOException $e){
     print('Error:'.$e->getMessage());
     die();
@@ -33,25 +28,35 @@ try{
 $postedData='';
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
-    $updateId = $_POST['updateid'];
-    $isFiniched = $_POST['isfiniched'];
-    $updateContent = $_POST['updateContent'];
+    $updateId = array_key_exists('updateid', $_POST) ? $_POST['updateid'] : null;
+
+    $isFiniched = array_key_exists('isfiniched', $_POST) ? (bool)$_POST['isfiniched'] : '';
+    $updateContent = array_key_exists('updateContent', $_POST) ? $_POST['updateContent'] : '';
+    print('START <br />');
     print($updateId);
+    print('<br />');
     print($isFiniched);
+    print($_POST['isfiniched']);
+    print('<br />');
     print($updateContent);
+    print('<br />');
     if(!is_null($isFiniched)){
-        $sql = 'UPDATE todo set isfiniched = :is_finished where todoid = :update_id';
+        //$sql = 'UPDATE todo set isfiniched = TRUE where todoid = 13';
+        $sql = 'UPDATE todo set isfinished = :is_finished where todoid = :update_id';
     }else if(!is_null($updateContent)){
         $sql = 'UPDATE todo set title = :updateContent where todoid = :update_id';
     }
+    //$sql = 'UPDATE todo set isfiniched = true where todoid = 13';
     print($sql);
+    print('<br />');
     $stmt = $dbh->prepare($sql); // $dbh already has staff
-    //$stmt->bindParam(':name', $name, PDO::PARAM_STR);
-    //$stmt->bindValue(':value', 1, PDO::PARAM_INT);
-    $stmt->bindValue(':update_id', $updateId, PDO::PARAM_INT);
-    $stmt->bindValue(':is_finished', $postedContent, PDO::PARAM_BOOL);
-    $stmt->bindValue(':updateContent', $updateContent, PDO::PARAM_STR);
-    $stmt->execute();
+    //$stmt->bindValue(':update_id', '13', PDO::PARAM_STR);
+    $stmt->bindValue(':update_id', $updateId, PDO::PARAM_STR);
+    //$stmt->bindValue(':is_finished', '1', PDO::PARAM_STR);
+    $stmt->bindValue(':is_finished', $isFiniched, PDO::PARAM_BOOL);
+    //$stmt->bindValue(':updateContent', $updateContent, PDO::PARAM_STR);
+    $returnState = $stmt->execute();
+    print($returnState);
   }
 
   // ステータスコードを出力

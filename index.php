@@ -39,6 +39,9 @@ $password = 'root';
 
 $dbh_json = array();
 $sql_json;
+
+session_start();
+
 try{
   $dbh = new PDO($dsn, $user, $password);
     $dbh_json = $dbh;
@@ -61,9 +64,11 @@ try{
     foreach ($dbh_json as $arr) {
       array_push($newArray, array(
         'key' => $arr['todoid'],
-        'value' => $arr['title']
+        'value' => $arr['title'],
+        'type' => 'todo'
       ));
     }
+    $_SESSION['dataStore'] = $newArray; //Storeする機構がほしい気がする
 }catch (PDOException $e){
     print('Error:'.$e->getMessage());
     die();
@@ -85,7 +90,8 @@ try{
       array_push($newArrayTimeRange, array(
         'key' => $arr['scheduleid'],
         'value' => $arr['title'],
-        'timeRange' => $timeRangeConst[$key]
+        'timeRange' => $timeRangeConst[$key],
+        'type' => 'schedule'
       ));
     }
 }catch (PDOException $e){
@@ -373,10 +379,10 @@ $basename = pathinfo($myPath, PATHINFO_BASENAME);
         <tbody id="test-list" v-on:keyup.enter="onEnterLastInput" @keydown.delete="onDelete" >
           <tr v-for="data in postedData">
             <th>
-              <check-button />
+              <check-button :target-id="data.key" />
             </th>
             <td class="input-area">
-              <t-input :target-id="data.key" :value="data.value" />
+              <t-input :target-id="data.key" :value="data.value" :type="data.type"/>
             </td>
           </tr>
         </tbody>
@@ -401,7 +407,7 @@ $basename = pathinfo($myPath, PATHINFO_BASENAME);
               <time-range :timestr="pertime.timeRange"/>
             </th>
             <td class="input-area">
-              <t-input :target-id="pertime.key" :value="pertime.value"/>
+              <t-input :target-id="pertime.key" :value="pertime.value" :type="pertime.type"/>
             </td>
           </tr>
         </tbody>
