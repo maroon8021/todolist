@@ -1,13 +1,16 @@
 .input-transparent{
   border-color: #fff;
   border: 1px solid transparent;
-  /*height: 38px;*/
+  height: 50px;
   width: 100%;
+  font-size: 1.2rem;
 }
 
-.input-area{
+table td.input-area{
   max-width: 100%;
   width: 900px;
+  padding-top: 0px;
+  padding-bottom: 0px;
 }
 
 /*

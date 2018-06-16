@@ -13,7 +13,7 @@ var onClickButton = function (e) {
   let inputKey = this.$el.getAttribute('data-input-key');
   let params = new URLSearchParams();
   this.isSuccess = !this.isSuccess;
-  params.append('isfiniched', this.isSuccess ? true : false);
+  params.append('isfiniched', this.isSuccess ? 1 : 0);
   params.append('updateid', inputKey);
   axios.post('/php/dbupdate.php', params).then(response => {
     console.log(response.status);
@@ -30,6 +30,7 @@ var onChangeEvent = function (e) {
     params.append('deletetodoid', inputKey);
     targetURL = '/php/dbtest.php';
   }else{
+    // ここ何してるんだっけ？
     for (let index = 0; index < postedData.length; index++) {
       if(inputKey === postedData[index].key && e.target.value === postedData[index].value){
         return;
@@ -38,7 +39,9 @@ var onChangeEvent = function (e) {
     params.append('newtodo', e.target.value);
     targetURL = '/php/datapostaxios.php';
   }
+  params.append('type', e.target.getAttribute('data-type'));
   axios.post(targetURL, params).then(response => {
+    //ここでJsonとか返すといろいろできるのか
     console.log(response.status);
     console.log(response);
   });
@@ -62,6 +65,10 @@ var input = Vue.extend({
     value: {
       type: String,
       default: null
+    },
+    type: {
+      type: String,
+      default: null
     }
   },
   /*
@@ -80,6 +87,7 @@ var input = Vue.extend({
            'name="deletetodo" ' +
            ':data-input-key="targetId" ' +
            ':data-time-range="data" ' +
+           ':data-type="type" ' +
            ':placeholder="placeholder" '+
            ':value="value" '+
            //'v-on:click="onClick" '+
