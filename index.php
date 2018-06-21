@@ -1,5 +1,11 @@
+<?php
+
+session_start();
+
+?>
 <!DOCTYPE html>
 <html>
+
 
 <head>
   <meta charset="utf-8">
@@ -39,8 +45,6 @@ $password = 'root';
 
 $dbh_json = array();
 $sql_json;
-
-session_start();
 
 try{
   $dbh = new PDO($dsn, $user, $password);

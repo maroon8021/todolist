@@ -33,7 +33,10 @@ $pathDate;
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
     $postedData = $_POST['newtodo'];
-    //$pathDate = $_POST['url'];
+    $type = $_POST['type'];
+    if($type == 'schedule'){
+        $stmt = $dbh->prepare('UPDATE schedule set title = :is_finished where todoid = :update_id');
+    }
     $stmt = $dbh->prepare("INSERT INTO todo (title) VALUES (:value)"); // $dbh already has staff
     //$stmt->bindParam(':name', $name, PDO::PARAM_STR);
     //$stmt->bindValue(':value', 1, PDO::PARAM_INT);
