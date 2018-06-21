@@ -36,7 +36,7 @@ var onChangeEvent = function (e) {
         return;
       } 
     }
-    params.append('newtodo', e.target.value);
+    params.append('newtodo', e.target.vnalue);
     targetURL = '/php/datapostaxios.php';
   }
   params.append('type', e.target.getAttribute('data-type'));
