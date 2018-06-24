@@ -14,6 +14,7 @@
 - export fixed data(ex: define('DB_HOST', 'localhost'); )
 - Want to implement Routing
 - How can I use "try?"
+- body以下のscriptタグのまとめあげたい
 
 #Fixed tasks
 - Create time-range object by server-side
