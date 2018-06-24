@@ -1,9 +1,46 @@
+
+/*
+var tagList = JSON.parse('<?php echo $tagList; ?>');
+console.log(tagList);
+*/
+
+var checkbox = Vue.extend({
+  props:{
+    targetId: {
+      type: String,
+      default: null
+    },
+    value: {
+      type: String,
+      default: null
+    },
+    label: {
+      type: String,
+      default: null
+    }
+  },
+  template:'<label class="checkbox"> ' +
+           '<input type="checkbox" ' +
+           ':data-target-id="targetId" ' +
+           ':value="value"> ' +
+           '{{label}} ' +
+           '</label>',
+})
+
+Vue.component('tag-checkbox', checkbox);
+
 var app = new Vue({
-  el: '#app',
+  el: '#tag-manager',
   data: {
-    message: 'Hello Vue!'
+    tagList: tagList
+  },
+  components: {
+    'tag-checkbox' : checkbox
   }
 })
+
+
+
 
 var onClickEvent = function (e) {
   alert('click!!***');
@@ -208,6 +245,7 @@ var app = new Vue({
 })
 */
 
+/*
 var app = new Vue({
   el: '#t-input-2',
   methods: {
@@ -219,6 +257,7 @@ var app = new Vue({
     },
   },
 })
+*/
 
 /*
 var app = new Vue({
@@ -226,7 +265,7 @@ var app = new Vue({
 })
 */
 
-
+/*
 var $table = document.getElementById("task-list-table");
 var $customList = document.getElementById("test-list");
 $table.appendChild($customList);
