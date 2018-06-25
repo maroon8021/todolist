@@ -65,18 +65,7 @@ tagList = [{target: '1', name: 'Diary'},{target: '2', name: 'Programing'}]
         <textarea class="textarea" placeholder="e.g. Hello world" ></textarea>
       </div>
 
-      <div id="tag-manager">
-      <div class="field has-addons">
-        <div class="control">
-          <tag-checkbox v-for="(tagData, index) in tagList" :target-id="tagData.target" :label="tagData.name" ></tag-checkbox>
-           <!--
-           <label class="checkbox">
-             <input type="checkbox">
-               Remember me
-          </label>
-          -->
-        </div>
-      </div>
+      <tag-manager :tag-list="tagList"></tag-manager>
       
       <div class="field has-addons">
         <p class="control">
@@ -92,7 +81,7 @@ tagList = [{target: '1', name: 'Diary'},{target: '2', name: 'Programing'}]
 
       <div class="field has-addons">
         <div class="control">
-          <button class="button is-link">Submit</button>
+          <button class="button is-link" @click="onClick" >Submit</button>
         </div>
       </div>
 

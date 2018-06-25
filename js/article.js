@@ -29,14 +29,72 @@ var checkbox = Vue.extend({
 
 Vue.component('tag-checkbox', checkbox);
 
-var app = new Vue({
+
+var tagManager = Vue.extend({
+  /*
+  data: function(){
+    return {
+      tagList: tagList
+    }
+  },
+  */
+ /*
+  props:{
+    tagList: {
+      type: Object,
+      default: null
+    }
+  },
+  */
+  props:['tagList'],
+  template:'<div class="field has-addons"> ' +
+           '<div class="control"> ' +
+           '<tag-checkbox ref="childCheckbox" ' + 
+           'v-for="(tagData, index) in tagList" ' + 
+           ':target-id="tagData.target" ' + 
+           ':label="tagData.name" > ' +
+           '</tag-checkbox> ' +
+           '</div> ' +
+           '</div>',
+  methods:{
+    getCheckedList(){
+      return console.log("Get!");
+    }
+  }
+});
+
+Vue.component('tag-manager', tagManager);
+
+/*
+new Vue({
   el: '#tag-manager',
   data: {
     tagList: tagList
   },
+  methods: {
+    getCheckedList(){
+      return console.log("Get!");
+    }
+  },
   components: {
     'tag-checkbox' : checkbox
   }
+})
+*/
+
+new Vue({
+  el: '#article-manager',
+  data: {
+    tagList: tagList
+  },
+  methods: {
+    onClick(){
+      this.$refs.childCheckbox.getCheckedList();
+    }
+  },
+  components: {
+    'tag-manager' : tagManager
+  },
 })
 
 
