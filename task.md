@@ -1,7 +1,11 @@
 #Remain tasks
+- How to get data of checkboxes
+- Install Froala
+
 - Connect DB from schedule input
  └ INSERT
  └ UPDATE
+
 - Add time-stamp?
 - Refactoring index.php
 - Refactoring index.js
