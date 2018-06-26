@@ -1,6 +1,7 @@
 <?php
 
 require('dbConst.php');
+
 /**
  * DBScheme
  * -article
@@ -30,8 +31,8 @@ class ArticleController{
             $rowTagList = $prepared->fetchAll(); //fetchAllってなんだっけ？
               foreach ($rowTagList as $tag) { //なんかこの辺ってよろしくやってくれそうなmethodありそう
                 array_push($tagList, array(
-                  'key' => $tag['tag_id'],
-                  'name' => $tag['tag_name']
+                  'tagId' => $tag['tag_id'],
+                  'tagName' => $tag['tag_name']
                 ));
               }
         }catch (PDOException $e){
@@ -73,6 +74,36 @@ class ArticleController{
           }
     }
 
+}
+
+
+// When POST
+
+/**
+ * param = {
+ *   tagList: Array
+ *   article: String
+ *   type: String
+ * }
+ * 
+ * table \ colmun?
+ */
+if($_SERVER['REQUEST_METHOD'] === 'POST'){
+
+    $dbh = new PDO(DSN, USER, PASSWORD); // Maybe this is not needed
+    // Perhaps validating "type" at first is needed
+
+    $tagList = $_POST['tagList'];
+    $article = $_POST['article'];
+    $type = $_POST['type'];
+    if($type == 'new-article'){
+        // $stmt = $dbh->prepare('UPDATE schedule set title = :is_finished where todoid = :update_id');
+    }
+    $stmt = $dbh->prepare("INSERT INTO article (content) VALUES (:value)"); // $dbh already has staff
+    //$stmt->bindParam(':name', $name, PDO::PARAM_STR);
+    //$stmt->bindValue(':value', 1, PDO::PARAM_INT);
+    $stmt->bindValue(':value', $article, PDO::PARAM_STR);
+    $stmt->execute();
 }
 
 

@@ -5,8 +5,13 @@ console.log(tagList);
 */
 
 var checkbox = Vue.extend({
+  data: function(){
+    return {
+      checked: false
+    }
+  },
   props:{
-    targetId: {
+    tagId: {
       type: String,
       default: null
     },
@@ -21,44 +26,46 @@ var checkbox = Vue.extend({
   },
   template:'<label class="checkbox"> ' +
            '<input type="checkbox" ' +
-           ':data-target-id="targetId" ' +
-           ':value="value"> ' +
+           ':data-tag-id="tagId" ' +
+           ':value="value" ' +
+           'v-model="checked"> ' +
            '{{label}} ' +
            '</label>',
+  
+  methods: {
+    getChecked: function(){
+      return this.checked;
+    },
+    getTagId: function(){
+      return this.tagId;
+    },
+  }
 })
 
 Vue.component('tag-checkbox', checkbox);
 
 
 var tagManager = Vue.extend({
-  /*
-  data: function(){
-    return {
-      tagList: tagList
-    }
-  },
-  */
- /*
-  props:{
-    tagList: {
-      type: Object,
-      default: null
-    }
-  },
-  */
   props:['tagList'],
   template:'<div class="field has-addons"> ' +
            '<div class="control"> ' +
-           '<tag-checkbox ref="childCheckbox" ' + 
-           'v-for="(tagData, index) in tagList" ' + 
-           ':target-id="tagData.target" ' + 
-           ':label="tagData.name" > ' +
+           '<tag-checkbox ' + 
+           'v-for="(tagData, index) in tagList" :key="tagData.tagId" ' + 
+           ':tag-id="tagData.tagId" ' + 
+           ':label="tagData.tagName" > ' +
            '</tag-checkbox> ' +
            '</div> ' +
            '</div>',
   methods:{
     getCheckedList(){
-      return console.log("Get!");
+      var checkedList = [];
+      for (let index = 0; index < this.$children.length; index++) {
+        var isChecked = this.$children[index].getChecked();
+        if(isChecked){
+          checkedList.push(this.$children[index].getTagId())
+        }
+      }
+      return checkedList;
     }
   }
 });
@@ -89,7 +96,20 @@ new Vue({
   },
   methods: {
     onClick(){
-      this.$refs.childCheckbox.getCheckedList();
+      var checkedTagList = this.$refs.childCheckbox.getCheckedList();
+      var $textarea = this.$el.getElementsByClassName('article-textarea')[0];
+      var articleValue = $textarea.value;
+
+      let params = new URLSearchParams();
+      params.append('tagList', checkedTagList);
+      params.append('article', articleValue);
+      params.append('type', 'new-article');
+      axios.post('/php/articleController.php', params).then(response => {
+        console.log(response.status);
+        console.log(response);
+      });
+
+      console.log(checkedTagList);
     }
   },
   components: {

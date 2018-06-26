@@ -32,7 +32,7 @@ var tagList = JSON.parse('<?php echo $tagList; ?>');
 console.log(tagList);
 
 // temp
-tagList = [{target: '1', name: 'Diary'},{target: '2', name: 'Programing'}]
+tagList = [{tagId: '1', tagName: 'Diary'},{tagId: '2', tagName: 'Programing'}]
 </script>
 
 
@@ -56,16 +56,16 @@ tagList = [{target: '1', name: 'Diary'},{target: '2', name: 'Programing'}]
 <main class="bd-main">
   <section class="section">
     <div id="article-manager" class="container">
-      <h1 class="title">Add Article</h1>
+      <h1 class="title">Add an Article</h1>
       <h2 class="subtitle">
         Add something new here
       </h2>
 
       <div class="field has-addons">
-        <textarea class="textarea" placeholder="e.g. Hello world" ></textarea>
+        <textarea class="textarea article-textarea" placeholder="e.g. Hello world" ></textarea>
       </div>
 
-      <tag-manager :tag-list="tagList"></tag-manager>
+      <tag-manager ref="childCheckbox" :tag-list="tagList"></tag-manager>
       
       <div class="field has-addons">
         <p class="control">
@@ -73,10 +73,9 @@ tagList = [{target: '1', name: 'Diary'},{target: '2', name: 'Programing'}]
         </p>
         <p class="control">
         <button class="button is-success">
-          Login
+          Create New Tag
           </button>
         </p>
-      </div>
       </div>
 
       <div class="field has-addons">
