@@ -72,10 +72,10 @@ if(tagList.length === 0){
       
       <div class="field has-addons">
         <p class="control">
-          <input class="input" type="text" placeholder="New Tag">
+          <input class="input new-tag-input" type="text" placeholder="New Tag">
         </p>
         <p class="control">
-        <button class="button is-success">
+        <button class="button is-success" @click="onClickNewTag">
           Create New Tag
           </button>
         </p>
@@ -83,7 +83,7 @@ if(tagList.length === 0){
 
       <div class="field has-addons">
         <div class="control">
-          <button class="button is-link" @click="onClick" >Submit</button>
+          <button class="button is-link" @click="onClickSubmit" >Submit</button>
         </div>
       </div>
 
