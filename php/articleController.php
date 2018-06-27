@@ -1,6 +1,7 @@
 <?php
 
-require('dbConst.php');
+require_once('dbConst.php');
+require_once('dataHandler.php');
 
 /**
  * DBScheme
@@ -89,22 +90,75 @@ class ArticleController{
  * table \ colmun?
  */
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
+    $dataHandler = new DataHandler(DSN, USER, PASSWORD);
 
-    $dbh = new PDO(DSN, USER, PASSWORD); // Maybe this is not needed
-    // Perhaps validating "type" at first is needed
+    switch($_POST['type']){
+        case 'new-article':
+        insertNewArticle($dataHandler);
 
-    $tagList = $_POST['tagList'];
-    $article = $_POST['article'];
-    $type = $_POST['type'];
-    if($type == 'new-article'){
-        // $stmt = $dbh->prepare('UPDATE schedule set title = :is_finished where todoid = :update_id');
+        // Insert tags if it exists.
+        if(empty($_POST['tagList'])){
+            exit();
+        }
+        
+        // Insert new tags
+        $insertedId = $dataHandler->getLastInsertedId();
+        $dataHandler->setTargetTable('tag_map');
+        $dataHandler->setTargetColumns(array('article_id', 'tag_id'));
+        $tagList = explode(',', $_POST['tagList']);
+        
+        for ($i=0; $i < count($tagList); $i++) {
+            $dataHandler->execute(array($insertedId, $tagList[$i]));
+        }
+        break;
+
+        case 'new-tag':
+        break;
     }
-    $stmt = $dbh->prepare("INSERT INTO article (content) VALUES (:value)"); // $dbh already has staff
+    
+
+    
+    
+    
+    
+
+    //$article = $_POST['article'];
+    //$type = $_POST['type'];
+    //if($type == 'new-article'){
+        // $stmt = $dbh->prepare('UPDATE schedule set title = :is_finished where todoid = :update_id');
+    //}
+    //$stmt = $dbh->prepare("INSERT INTO article (content) VALUES (:value)"); // $dbh already has staff
     //$stmt->bindParam(':name', $name, PDO::PARAM_STR);
     //$stmt->bindValue(':value', 1, PDO::PARAM_INT);
-    $stmt->bindValue(':value', $article, PDO::PARAM_STR);
-    $stmt->execute();
+    //$stmt->bindValue(':value', $article, PDO::PARAM_STR);
+    //$stmt->execute();
+
+
+    
 }
 
+/**
+ * @param {DataHandler} $dataHandler
+ */
+function insertNewArticle($dataHandler){
+    $dataHandler->setActionType('insert');
+    $dataHandler->setTargetTable('article'); // const化したい
+    $dataHandler->setTargetColumns(array('content'));
+    $dataHandler->execute(array($_POST['article']));
+}
+
+/**
+ * @param {DataHandler} $dataHandler
+ */
+function insertNewTag($dataHandler){
+    $insertedId = $dataHandler->getLastInsertedId();
+    $dataHandler->setTargetTable('tag_map');
+    $dataHandler->setTargetColumns(array('article_id', 'tag_id'));
+    $tagList = explode(',', $_POST['tagList']);
+        
+    for ($i=0; $i < count($tagList); $i++) {
+        $dataHandler->execute(array($insertedId, $tagList[$i]));
+    }
+}
 
 ?>

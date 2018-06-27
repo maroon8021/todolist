@@ -1,10 +1,11 @@
 <?php
 
-class DataHander {
+
+class DataHandler{
     protected $dbh;
     protected $actionType;
     protected $targetTable;
-    protected $targetColumn;
+    protected $targetColumns;
 
     public function __construct($dsn, $user, $password) {
         $this->dbh = new PDO($dsn, $user, $password, array(
@@ -28,26 +29,69 @@ class DataHander {
     }
 
     /**
-     * @param {String} $targetColumn
+     * @param {Array<>} $targetColumn
      */
-    public function setTargetColumn($targetColumn) {
-        $this->targetColumn = $targetColumn;
+    public function setTargetColumns($targetColumns) {
+        $this->targetColumns = $targetColumns;
+    }
+
+    /**
+     * @return {String} id
+     */
+    public function getLastInsertedId() {
+        return $this->dbh->lastInsertId('id');
     }
 
     /**
      * 
      */
-    public function execute($content) {
+    public function execute($contents) {
         $stmt = null;
-        switch($this->actionType){
-            case 'insert':
-              $stmt = $dbh->prepare("INSERT INTO .$this->targetTable. (.$this->targetColumn.) VALUES (:value)");
-              break;
+        try{
+            switch($this->actionType){
+                case 'insert':
+                $columns = $this->getTargetColumns();
+                $placeholders = $this->getPlaceHolders();
+                  $stmt = $this->dbh->prepare("INSERT INTO $this->targetTable ($columns) VALUES ($placeholders)");
+                  break;
+            }
+            for ($i=0; $i < count($this->targetColumns); $i++) { 
+                $stmt->bindValue($i+1, $contents[$i], PDO::PARAM_STR);
+            }
+            
+            $stmt->execute();
+
+        }catch (PDOException $e){
+            print('Error:'.$e->getMessage());
+            die();
         }
-        $stmt->bindValue(':value', $content, PDO::PARAM_STR);
-        $stmt->execute();
     }
 
+
+
+    /**********************************
+     * Private methods
+     **********************************/
+
+     private function getTargetColumns(){
+         $result = '';
+         $index = 1;
+         foreach ($this->targetColumns as $targetColumn) {
+            $result = $index != count($this->targetColumns) ? $result.$targetColumn.',' : $result.$targetColumn;
+            $index++;
+        }
+        return $result;
+     }
+
+     private function getPlaceHolders(){
+        $result = '';
+        $index = 1;
+        foreach ($this->targetColumns as $targetColumn) {
+            $result = $index != count($this->targetColumns) ? $result.'?,' : $result.'?';
+            $index++;
+       }
+       return $result;
+    }
 
     
 }
