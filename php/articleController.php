@@ -95,21 +95,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     switch($_POST['type']){
         case 'new-article':
         insertNewArticle($dataHandler);
-
-        // Insert tags if it exists.
-        if(empty($_POST['tagList'])){
-            exit();
-        }
-        
-        // Insert new tags
-        $insertedId = $dataHandler->getLastInsertedId();
-        $dataHandler->setTargetTable('tag_map');
-        $dataHandler->setTargetColumns(array('article_id', 'tag_id'));
-        $tagList = explode(',', $_POST['tagList']);
-        
-        for ($i=0; $i < count($tagList); $i++) {
-            $dataHandler->execute(array($insertedId, $tagList[$i]));
-        }
+        insertSelectedTag($dataHandler);
         break;
 
         case 'new-tag':
@@ -150,7 +136,29 @@ function insertNewArticle($dataHandler){
 /**
  * @param {DataHandler} $dataHandler
  */
+function insertSelectedTag($dataHandler){
+    if(empty($_POST['tagList'])){
+        exit();
+    }
+
+    $insertedId = $dataHandler->getLastInsertedId();
+    $dataHandler->setTargetTable('tag_map');
+    $dataHandler->setTargetColumns(array('article_id', 'tag_id'));
+    $tagList = explode(',', $_POST['tagList']);
+        
+    for ($i=0; $i < count($tagList); $i++) {
+        $dataHandler->execute(array($insertedId, $tagList[$i]));
+    }
+}
+
+/**
+ * @param {DataHandler} $dataHandler
+ */
 function insertNewTag($dataHandler){
+    if(empty($_POST['tagList'])){
+        exit();
+    }
+
     $insertedId = $dataHandler->getLastInsertedId();
     $dataHandler->setTargetTable('tag_map');
     $dataHandler->setTargetColumns(array('article_id', 'tag_id'));

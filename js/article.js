@@ -95,7 +95,7 @@ new Vue({
     tagList: tagList
   },
   methods: {
-    onClick(){
+    onClickSubmit(){
       var checkedTagList = this.$refs.childCheckbox.getCheckedList();
       var $textarea = this.$el.getElementsByClassName('article-textarea')[0];
       var articleValue = $textarea.value;
@@ -108,9 +108,17 @@ new Vue({
         console.log(response.status);
         console.log(response);
       });
+    },
+    onClickNewTag(){
+      var $input = this.$el.getElementsByClassName('new-tag-input')[0];
+      var inputValue = $input.value;
 
-      console.log(checkedTagList);
+      let params = new URLSearchParams();
+      params.append('tagList', checkedTagList);
+      params.append('article', articleValue);
+      params.append('type', 'new-article');
     }
+
   },
   components: {
     'tag-manager' : tagManager

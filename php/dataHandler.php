@@ -29,7 +29,7 @@ class DataHandler{
     }
 
     /**
-     * @param {Array<>} $targetColumn
+     * @param {Array<String>} $targetColumn
      */
     public function setTargetColumns($targetColumns) {
         $this->targetColumns = $targetColumns;
