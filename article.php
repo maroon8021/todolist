@@ -18,7 +18,7 @@ TODO
 
 <?php
 // Get view data
-require('php/articleController.php');
+require_once('php/articleController.php');
 
 $articleController = new ArticleController();
 $tagList = json_encode($articleController->getTagData());
@@ -32,7 +32,10 @@ var tagList = JSON.parse('<?php echo $tagList; ?>');
 console.log(tagList);
 
 // temp
-tagList = [{tagId: '1', tagName: 'Diary'},{tagId: '2', tagName: 'Programing'}]
+if(tagList.length === 0){
+  tagList = [{tagId: '1', tagName: 'Diary'},{tagId: '2', tagName: 'Programing'}]
+}
+
 </script>
 
 
