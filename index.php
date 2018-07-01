@@ -22,93 +22,13 @@ session_start();
 <?php
 //////////////////////////////////////
 
-$timeRangeConst = array(
-  '10:00 ~ 11:00',
-  '11:00 ~ 12:00',
-  '12:00 ~ 13:00',
-  '13:00 ~ 14:00',
-  '14:00 ~ 15:00',
-  '15:00 ~ 16:00',
-  '16:00 ~ 17:00',
-  '17:00 ~ 18:00',
-  '18:00 ~ 19:00',
-  '19:00 ~ 20:00',
-  '20:00 ~ 21:00'
-);
+require_once('php/scheduleController.php');
 
-//テンプレ
-define('DB_HOST', 'localhost'); //定数化
+$scheduleController = new ScheduleController();
+$scheduleList = json_encode($scheduleController->getTodoData());
+$todoList = json_encode($scheduleController->getScheduleData());
 
-$dsn = 'mysql:dbname=todolist;host='.DB_HOST.';charset=utf8mb4'; //utf8の指定が必要
-$user = 'root';
-$password = 'root';
-
-$dbh_json = array();
-$sql_json;
-
-try{
-  $dbh = new PDO($dsn, $user, $password);
-    $dbh_json = $dbh;
-
-    $sql = 'select * from todo where isfinished IS false';
-    $sql_json = $sql;
-
-    foreach ($dbh->query($sql) as $row) {
-        print($row['todoid'].',');
-        print($row['title']);
-        print('<br />');
-    }
-
-
-    $prepared = $dbh->prepare($sql);
-    $prepared->execute();
-    $dbh_json = $prepared->fetchAll();
-
-    $newArray = array();
-    foreach ($dbh_json as $arr) {
-      array_push($newArray, array(
-        'key' => $arr['todoid'],
-        'value' => $arr['title'],
-        'type' => 'todo'
-      ));
-    }
-    $_SESSION['dataStore'] = $newArray; //Storeする機構がほしい気がする
-}catch (PDOException $e){
-    print('Error:'.$e->getMessage());
-    die();
-}
-
-$timeRange_json = array();
-
-try{
-  $dbh = new PDO($dsn, $user, $password);
-
-    $sql = 'select * from schedule';
-
-    $prepared = $dbh->prepare($sql);
-    $prepared->execute();
-    $timeRange_json = $prepared->fetchAll();
-
-    $newArrayTimeRange = array();
-    foreach ($timeRange_json as $key => $arr) {
-      array_push($newArrayTimeRange, array(
-        'key' => $arr['scheduleid'],
-        'value' => $arr['title'],
-        'timeRange' => $timeRangeConst[$key],
-        'type' => 'schedule'
-      ));
-    }
-}catch (PDOException $e){
-    print('Error:'.$e->getMessage());
-    die();
-}
-
-//$dbh = null;
-$dbh_json = json_encode($newArray);
-$timeRange_json = json_encode($newArrayTimeRange);
-print($dbh_json);
-$sql_json = json_encode($sql_json);
-
+$_SESSION['dataStore'] = $todoList; //Storeする機構がほしい気がする
 
 $postedData='';
 if($_SERVER['REQUEST_METHOD'] === 'POST'){
@@ -119,50 +39,28 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     //$stmt->bindValue(':value', 1, PDO::PARAM_INT);
     $stmt->bindValue(':value', $postedData, PDO::PARAM_STR);
     $stmt->execute();
-  }
+}
 
+/*
 $serverRequest_json = json_encode($_SERVER['REQUEST_METHOD']);
 $postedData_json = json_encode($postedData);
 
 $myPath = __FILE__;
 $basename = pathinfo($myPath, PATHINFO_BASENAME);
+*/
 
 ////////////////////////////////////////
 ?>
 
 
 <script type="text/javascript">
-  var serverRequest = JSON.parse('<?php echo $serverRequest_json; ?>');
-  console.log(serverRequest);
 
-  var postedData = JSON.parse('<?php echo $dbh_json; ?>');
-  var timeRangeArray = JSON.parse('<?php echo $timeRange_json; ?>');
+  var postedData = JSON.parse('<?php echo $scheduleList; ?>');
+  var timeRangeArray = JSON.parse('<?php echo $todoList; ?>');
   console.log("$postedData : "+postedData);
   console.log(postedData);
   console.log(timeRangeArray)
   // Data Getter
-
-/*
-  var timeRangeArray = [
-  '10:00 ~ 11:00',
-  '11:00 ~ 12:00',
-  '12:00 ~ 13:00',
-  '13:00 ~ 14:00',
-  '14:00 ~ 15:00',
-  '15:00 ~ 16:00',
-  '16:00 ~ 17:00',
-  '17:00 ~ 18:00',
-  '18:00 ~ 19:00',
-  '19:00 ~ 20:00',
-  '20:00 ~ 21:00'
-  ];
-  */
-
-  /**
-  [
-  {key:11, value:-title-, }
-  ]
-  */
 
 </script>
 
@@ -380,7 +278,7 @@ $basename = pathinfo($myPath, PATHINFO_BASENAME);
             <th>Content</th>
           </tr>
         </thead>
-        <tbody id="test-list" v-on:keyup.enter="onEnterLastInput" @keydown.delete="onDelete" >
+        <tbody id="test-list" v-focus v-on:keyup.enter="onEnterLastInput" @keydown.delete="onDelete" @keydown.enter="onKeyDownEnter" @keypress.enter="onKeyPressEnter" >
           <tr v-for="data in postedData">
             <th>
               <check-button :target-id="data.key" />
