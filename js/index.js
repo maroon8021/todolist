@@ -34,13 +34,16 @@ var onChangeEvent = function (e) {
     action = 'delete-';
   }else{
     // ここ何してるんだっけ？
+    var targetIndex = null;
     for (let index = 0; index < postedData.length; index++) {
+      targetIndex = parseInt(inputKey, 10) === postedData[index].key ? index : targetIndex;
       if(inputKey === postedData[index].key && e.target.value === postedData[index].value){
         return;
       } 
     }
-    params.append('newtodo', e.target.value);
-    action = 'new-'
+    params.append('new_value', e.target.value);
+    params.append('key', inputKey);
+    action = targetIndex === null ? 'new-' : 'update-';
   }
   targetURL = '/php/scheduleController.php';
   params.append('type', action + e.target.getAttribute('data-type'));
