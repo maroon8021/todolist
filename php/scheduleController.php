@@ -26,8 +26,8 @@ define('TIME_RANGE', array(
  * -schedule
  *  └ scheduleid
  *  └ title
- *  └ comments
- *  *└ time-stamp (is needed)
+ *  └ time_stamp
+ *  *└ comments
  */
 
 class ScheduleController{
@@ -59,6 +59,7 @@ class ScheduleController{
         $dataHandler = new DataHandler(DSN, USER, PASSWORD);
         $dataHandler->setActionType('select');
         $dataHandler->setTargetTable('schedule');
+        $this->initialize($dataHandler);
         $dataHandler->execute();
 
         $rowScheduleList = $dataHandler->fetchAll();
@@ -73,6 +74,10 @@ class ScheduleController{
         }
         
         return $scheduleList;
+    }
+
+    private function initialize($dataHandler){
+        // TODO
     }
 
 }
@@ -109,7 +114,27 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         $dataHandler->setActionType('insert'); // const化したい
         $dataHandler->setTargetTable('todo'); // const化したい
         $dataHandler->setTargetColumns(array('title'));
-        $dataHandler->execute(array($_POST['newtodo']));
+        $dataHandler->execute(array($_POST['new_value']));
+
+        break;
+
+        case 'update-todo':
+        $dataHandler->setActionType('update'); // const化したい
+        $dataHandler->setTargetTable('todo'); // const化したい
+        $dataHandler->setUpdateTarget('title = ?');
+        $dataHandler->setQuery('todoid = ?');
+        $dataHandler->execute(array($_POST['new_value'], $_POST['key']));
+
+        break;
+
+        case 'new-schedule':
+        case 'update-schedule':
+        $dataHandler->setActionType('update'); // const化したい
+        $dataHandler->setTargetTable('schedule'); // const化したい
+        $dataHandler->setUpdateTarget('title = ?, time_stamp = ?');
+        $dataHandler->setQuery('scheduleid = ?');
+        $today = date("Y/m/d");
+        $dataHandler->execute(array($_POST['new_value'], $today, $_POST['key']));
 
         break;
 
@@ -118,6 +143,15 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         $dataHandler->setTargetTable('todo'); // const化したい
         $dataHandler->setQuery('todoid = ?');
         $dataHandler->execute(array($_POST['deletetodoid']));
+
+        break;
+
+        case 'delete-schedule':
+        $dataHandler->setActionType('update'); // const化したい
+        $dataHandler->setTargetTable('schedule'); // const化したい
+        $dataHandler->setUpdateTarget('title = ?');
+        $dataHandler->setQuery('scheduleid = ?');
+        $dataHandler->execute(array('' ,$_POST['deletetodoid']));
 
         break;
     }
