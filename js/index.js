@@ -15,7 +15,8 @@ var onClickButton = function (e) {
   this.isSuccess = !this.isSuccess;
   params.append('isfiniched', this.isSuccess ? 1 : 0);
   params.append('updateid', inputKey);
-  axios.post('/php/dbupdate.php', params).then(response => {
+  params.append('type', 'task-complete-button');
+  axios.post('/php/scheduleController.php', params).then(response => {
     console.log(response.status);
     console.log(response);
   });
@@ -23,12 +24,14 @@ var onClickButton = function (e) {
 }
 
 var onChangeEvent = function (e) {
+  // TODOとscheduleの分岐とschedule側のタイムスタンプをやりたい。
   let params = new URLSearchParams();
   let targetURL;
   let inputKey = e.target.getAttribute('data-input-key');
+  let action = '';
   if(e.target.value === ''){
     params.append('deletetodoid', inputKey);
-    targetURL = '/php/dbtest.php';
+    action = 'delete-';
   }else{
     // ここ何してるんだっけ？
     for (let index = 0; index < postedData.length; index++) {
@@ -36,10 +39,11 @@ var onChangeEvent = function (e) {
         return;
       } 
     }
-    params.append('newtodo', e.target.vnalue);
-    targetURL = '/php/datapostaxios.php';
+    params.append('newtodo', e.target.value);
+    action = 'new-'
   }
-  params.append('type', e.target.getAttribute('data-type'));
+  targetURL = '/php/scheduleController.php';
+  params.append('type', action + e.target.getAttribute('data-type'));
   axios.post(targetURL, params).then(response => {
     //ここでJsonとか返すといろいろできるのか
     console.log(response.status);
@@ -59,7 +63,7 @@ var input = Vue.extend({
       default: null
     },
     targetId: {
-      type: String,
+      type: [Number, String],
       default: null
     },
     value: {
@@ -119,7 +123,7 @@ var checkButton = Vue.extend({
   },
   props:{
     targetId: {
-      type: String,
+      type: [Number, String],
       default: null
     }
   },
@@ -258,18 +262,25 @@ var app = new Vue({
     onEnterLastInput: function(e){
       let $inputs = this.$el.getElementsByClassName('input-area');
       let $lastInput = $inputs[$inputs.length - 1];
-      if( $lastInput === e.target){
+      if( $lastInput === e.target && this.isKeyPressed){
         let inputKey = parseInt(e.target.getAttribute('data-input-key'), 10);
-        this.$set(this.postedData, this.postedData.length, {key: String(inputKey + 1), value: ''});
+        this.$set(this.postedData, this.postedData.length, {key: String(inputKey + 1), value: '', type: 'todo'});
       }
+
       console.log("this is Enter on app");
+    },
+    onKeyDownEnter: function(e){
+      this.isKeyPressed = false;
+    },
+    onKeyPressEnter: function(e){
+      this.isKeyPressed = true;
     },
     onDelete: function(e){
       if(e.target.value === ''){
         let inputKey = e.target.getAttribute('data-input-key');
         for (let index = 0; index < this.postedData.length; index++) {
           const data = this.postedData[index];
-          if(data.key === inputKey){
+          if(data.key === parseInt(inputKey,10)){
             this.$delete(this.postedData, String(index));
             onChangeEvent(e);
           } 
@@ -279,6 +290,14 @@ var app = new Vue({
   },
   mounted: function(){
     //this.$set(this.postedData, this.postedData.length, {key: 'testKey', value: 'testValue'});
+  },
+  directives: {
+    focus : {
+      componentUpdated : function(el){
+        let $inputs = el.getElementsByClassName('input-area');
+        $inputs[$inputs.length - 1].focus();
+      }
+    }
   },
 })
 

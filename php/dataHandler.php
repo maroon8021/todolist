@@ -3,9 +3,12 @@
 
 class DataHandler{
     protected $dbh;
+    protected $stmt;
     protected $actionType;
     protected $targetTable;
     protected $targetColumns;
+    protected $updateTarget;
+    protected $query = '';
 
     public function __construct($dsn, $user, $password) {
         $this->dbh = new PDO($dsn, $user, $password, array(
@@ -36,35 +39,79 @@ class DataHandler{
     }
 
     /**
+     * @param {String} $query
+     */
+    public function setQuery($query) {
+        $this->query = $query;
+    }
+
+    /**
+     * @param {String} $updateTarget
+     */
+    public function setUpdateTarget($updateTarget) {
+        $this->updateTarget = $updateTarget;
+    }
+
+    /**
      * @return {String} id
      */
     public function getLastInsertedId() {
         return $this->dbh->lastInsertId('id');
     }
 
+
     /**
      * 
      */
-    public function execute($contents) {
-        $stmt = null;
+    public function execute($contents = null) {
+        $this->stmt = null;
         try{
             switch($this->actionType){
+                case 'select':
+                $this->stmt = $this->dbh->prepare("SELECT * FROM $this->targetTable $this->query");
+                break;
+
                 case 'insert':
                 $columns = $this->getTargetColumns();
                 $placeholders = $this->getPlaceHolders();
-                  $stmt = $this->dbh->prepare("INSERT INTO $this->targetTable ($columns) VALUES ($placeholders)");
-                  break;
-            }
-            for ($i=0; $i < count($this->targetColumns); $i++) { 
-                $stmt->bindValue($i+1, $contents[$i], PDO::PARAM_STR);
+                $this->stmt = $this->dbh->prepare("INSERT INTO $this->targetTable ($columns) VALUES ($placeholders)");
+
+                for ($i=0; $i < count($this->targetColumns); $i++) { 
+                    $this->stmt->bindValue($i+1, $contents[$i], PDO::PARAM_STR);
+                }
+                break;
+
+                case 'update':
+                $this->stmt = $this->dbh->prepare("UPDATE $this->targetTable set $this->updateTarget WHERE $this->query");
+
+                for ($i=0; $i < count($contents); $i++) { 
+                    $this->stmt->bindValue($i+1, $contents[$i], PDO::PARAM_STR);
+                }
+                break;
+
+                case 'delete':
+                $this->stmt = $this->dbh->prepare("DELETE from $this->targetTable WHERE $this->query");
+
+                for ($i=0; $i < count($contents); $i++) { 
+                    $this->stmt->bindValue($i+1, $contents[$i], PDO::PARAM_STR);
+                }
+                break;
             }
             
-            $stmt->execute();
+            
+            $this->stmt->execute();
 
         }catch (PDOException $e){
             print('Error:'.$e->getMessage());
             die();
         }
+    }
+
+    /**
+     * 
+     */
+    public function fetchAll() {
+        return $this->stmt->fetchAll();
     }
 
 
