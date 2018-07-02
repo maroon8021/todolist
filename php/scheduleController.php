@@ -57,9 +57,10 @@ class ScheduleController{
     public function getScheduleData() {
         $scheduleList = array();
         $dataHandler = new DataHandler(DSN, USER, PASSWORD);
-        $dataHandler->setActionType('select');
         $dataHandler->setTargetTable('schedule');
         $this->initialize($dataHandler);
+
+        $dataHandler->setActionType('select');
         $dataHandler->execute();
 
         $rowScheduleList = $dataHandler->fetchAll();
@@ -76,8 +77,24 @@ class ScheduleController{
         return $scheduleList;
     }
 
+    /**
+     * 日付が今日じゃないものを取得する
+     * titleが残ってたら消す
+     * 日付も消す
+     */
     private function initialize($dataHandler){
         // TODO
+        $dataHandler->setActionType('update');
+        $today = date("Y/m/d");
+        $dataHandler->setUpdateTarget('title = ?, time_stamp = ?');
+        $dataHandler->setQuery('time_stamp != '.$today);
+        var_dump('WHERE time_stamp != '.$today);
+        $dataHandler->execute(array('',''));
+        $dataHandler->setQuery('');
+        var_dump('initialized');
+        
+
+        // reset any querys
     }
 
 }
