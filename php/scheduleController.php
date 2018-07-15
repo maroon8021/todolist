@@ -87,14 +87,10 @@ class ScheduleController{
         $dataHandler->setActionType('update');
         $today = date("Y/m/d");
         $dataHandler->setUpdateTarget('title = ?, time_stamp = ?');
-        $dataHandler->setQuery('time_stamp != '.$today);
-        var_dump('WHERE time_stamp != '.$today);
-        $dataHandler->execute(array('',''));
+        $dataHandler->setQuery('time_stamp != ?');
+        $dataHandler->execute(array('','',$today));
         $dataHandler->setQuery('');
-        var_dump('initialized');
         
-
-        // reset any querys
     }
 
 }
@@ -152,6 +148,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         $dataHandler->setQuery('scheduleid = ?');
         $today = date("Y/m/d");
         $dataHandler->execute(array($_POST['new_value'], $today, $_POST['key']));
+        var_dump('');
 
         break;
 
