@@ -87,35 +87,14 @@ if(tagList.length === 0){
         </div>
       </div>
 
+      <article class="message is-info">
+        <div class="message-body">
+        </div>
+      </article>
+
     </div>
   </section>
 
-<!--
-  <section class="section">
-    <div class="container">
-      <h1 class="title">Today's time list</h1>
-      <h2 class="subtitle">Today's plan and do</h2>
-      <table class="table" id="time-range-list-table">
-        <thead>
-          <tr>
-            <th><abbr title="Position">time range</abbr></th>
-            <th>Content</th>
-          </tr>
-        </thead>
-        <tbody id="time-range-list">
-          <tr v-for="(pertime, index) in timeRangeArray">
-            <th>
-              <time-range :timestr="pertime.timeRange"/>
-            </th>
-            <td class="input-area">
-              <t-input :target-id="pertime.key" :value="pertime.value"/>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-  -->
 
 </main>
 
