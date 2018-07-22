@@ -57,10 +57,10 @@ $_SESSION['dataStore'] = $todoList; //Storeする機構がほしい気がする
   </div>
 </nav>
 
-<div class="columns">
-<main class="bd-main column">
+<div id="main-container" class="columns main-area">
+<main class="bd-main column list-area">
   <section class="section">
-    <div class="container_">
+    <div class="container">
       <h1 class="title">Task list</h1>
       <h2 class="subtitle">What I have to do</h2>
       <table class="table" id="task-list-table">
@@ -70,13 +70,14 @@ $_SESSION['dataStore'] = $todoList; //Storeする機構がほしい気がする
             <th>Content</th>
           </tr>
         </thead>
-        <tbody id="test-list"  v-focus v-on:keyup.enter="onEnterLastInput" @keydown.delete="onDelete" @keydown.enter="onKeyDownEnter" @keypress.enter="onKeyPressEnter" >
+        <tbody id="test-list"  v-focus v-on:keyup.enter="onEnterLastInput" 
+          @keydown.delete="onDelete" @keydown.enter="onKeyDownEnter" @keypress.enter="onKeyPressEnter" >
           <tr v-for="data in postedData">
             <th>
               <check-button :target-id="data.key" />
             </th>
             <td class="input-area">
-              <t-input :target-id="data.key" :value="data.value" :type="data.type"/>
+              <t-input :target-id="data.key" :value="data.value" :type="data.type" @focused='onFocus'/>
             </td>
           </tr>
         </tbody>
@@ -85,7 +86,7 @@ $_SESSION['dataStore'] = $todoList; //Storeする機構がほしい気がする
   </section>
 
   <section class="section">
-    <div class="container_">
+    <div class="container">
       <h1 class="title">Today's time list</h1>
       <h2 class="subtitle">Today's plan and do</h2>
       <table class="table" id="time-range-list-table">
@@ -95,89 +96,14 @@ $_SESSION['dataStore'] = $todoList; //Storeする機構がほしい気がする
             <th>Content</th>
           </tr>
         </thead>
-        <tbody id="time-range-list" v-on:hogehoge="onFocusInnerInput">
-          <tr v-for="(pertime, index) in timeRangeArray">
-            <th>
-              <time-range :timestr="pertime.timeRange"/>
-            </th>
-            <td class="input-area">
-              <t-input :target-id="pertime.key" :value="pertime.value" :type="pertime.type" :placeholder="timeRangePlaceholder"/>
-            </td>
-          </tr>
-        </tbody>
+        <time-range-list :time-range-array='timeRangeArray' @focused='onFocus' @input='onInput'/>
       </table>
     </div>
   </section>
 
 </main>
+<content-area :is-inputted-focused='isInputtedFocused' :title='title' />
 
-<main class="column">
-<nav class="panel">
-  <p class="panel-heading">
-    repositories
-  </p>
-  <div class="panel-block">
-    <p class="control has-icons-left">
-      <input class="input is-small" type="text" placeholder="search">
-      <span class="icon is-small is-left">
-        <i class="fas fa-search" aria-hidden="true"></i>
-      </span>
-    </p>
-  </div>
-  <p class="panel-tabs">
-    <a class="is-active">all</a>
-    <a>public</a>
-    <a>private</a>
-    <a>sources</a>
-    <a>forks</a>
-  </p>
-  <a class="panel-block is-active">
-    <span class="panel-icon">
-      <i class="fas fa-book" aria-hidden="true"></i>
-    </span>
-    bulma
-  </a>
-  <a class="panel-block">
-    <span class="panel-icon">
-      <i class="fas fa-book" aria-hidden="true"></i>
-    </span>
-    marksheet
-  </a>
-  <a class="panel-block">
-    <span class="panel-icon">
-      <i class="fas fa-book" aria-hidden="true"></i>
-    </span>
-    minireset.css
-  </a>
-  <a class="panel-block">
-    <span class="panel-icon">
-      <i class="fas fa-book" aria-hidden="true"></i>
-    </span>
-    jgthms.github.io
-  </a>
-  <a class="panel-block">
-    <span class="panel-icon">
-      <i class="fas fa-code-branch" aria-hidden="true"></i>
-    </span>
-    daniellowtw/infboard
-  </a>
-  <a class="panel-block">
-    <span class="panel-icon">
-      <i class="fas fa-code-branch" aria-hidden="true"></i>
-    </span>
-    mojs
-  </a>
-  <label class="panel-block">
-    <input type="checkbox">
-    remember me
-  </label>
-  <div class="panel-block">
-    <button class="button is-link is-outlined is-fullwidth">
-      reset all filters
-    </button>
-  </div>
-</nav>
-</main>
 </div>
 
 
@@ -185,10 +111,10 @@ $_SESSION['dataStore'] = $todoList; //Storeする機構がほしい気がする
 <link rel="stylesheet" href="css/style.css">
 <script src="js/vue.js"></script>
 <script src="js/schedule.js"></script>
-<!--
+
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
--->
+
 <link rel="stylesheet" href="css/bulma-0.7.1/css/bulma.css">
 
 </body>

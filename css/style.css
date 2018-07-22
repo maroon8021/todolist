@@ -13,7 +13,27 @@ table td.input-area{
   padding-bottom: 0px;
 }
 
-/*
-td :     max-width: 100%;
-    width: 900px;;
-*/
+html, body, .main-area{
+  height: 100%;
+}
+
+.list-area{
+  height: 100%;
+  overflow-y: auto;
+}
+
+.content-area{
+  margin-top: 12px;
+}
+
+.content-area .textarea.content-area-textarea{
+  min-height: 300px;
+}
+
+.width-auto .section .container{
+  width: auto;
+}
+
+.display-none{
+  display: none!important;
+}
