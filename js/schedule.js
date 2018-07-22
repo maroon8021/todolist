@@ -76,13 +76,18 @@ var input = Vue.extend({
            ':value="value" '+
            'v-on:focus="onFocus" '+
            'v-on:change="onChange" '+
+           'v-on:input="onInput" '+
            '/>',
 
   methods: {
     onChange: onChangeEvent,
     onFocus: function(e){
       console.log("focused");
-      this.$emit('hogehoge');
+      this.$emit('focused', e);
+    },
+    onInput: function(e){
+      console.log("inputting");
+      this.$emit('input', e);
     }
   }
 })
@@ -143,14 +148,92 @@ var timeRange = Vue.extend({
 Vue.component('time-range', timeRange);
 
 
+var timeRangeList = Vue.extend({
+  template: '<tbody id="time-range-list">' +
+            '<tr v-for="(pertime, index) in timeRangeArray">' +
+            '<th>' +
+            '<time-range :timestr="pertime.timeRange"/>' +
+            '</th>' +
+            '<td class="input-area">' +
+            '<t-input @focused="onFocusInnerInput" @input="onInput" :target-id="pertime.key" :value="pertime.value" :type="pertime.type" :placeholder="timeRangePlaceholder"/>' +
+            '</td>' +
+            '</tr>' +
+            '</tbody>',
+  props:{
+    timeRangeArray: {
+      type: [Array],
+      default: null
+    },
+    timeRangePlaceholder: {
+      type: [String],
+      default: 'Add your schedule'
+    }
+  },
+  
+  components: {
+    'time-range' : timeRange,
+    't-input' : input
+  },
+  methods: {
+    onFocusInnerInput: function(e){
+      this.$emit('focused', e);
+    },
+    onInput: function(e){
+      this.$emit('input', e);
+    }
+  }
+})
 
-var $table = document.getElementById("task-list-table");
-var $customList = document.getElementById("test-list");
-$table.appendChild($customList);
+Vue.component('time-range-list', timeRangeList);
 
-var $table = document.getElementById("time-range-list-table");
-var $customList = document.getElementById("time-range-list");
-//$table.appendChild($customList);
+
+var contentArea = Vue.extend({
+  template: '<main class="column content-area" ' +
+            ':class="isDisplayed" ' +
+            // '@keypress.esc="onKeydownESC" ' +
+            ' >' +
+            '<nav class="panel">' +
+            '<p class="panel-heading">' +
+            '{{ title }} ' +
+            '</p>' +
+            '<div class="panel-block">' +
+            '<p class="control">' +
+            '<textarea class="textarea is-info content-area-textarea" ' + 
+              'type="text" placeholder="Input any contents" :value="content"></textarea> ' +
+            '</p>' +
+            '</div>' +
+            '</nav>' +
+            '</main>',
+  props:{
+    isInputtedFocused: {
+      type: [Boolean],
+      default: false
+    },
+    title: {
+      type: [String],
+      default: null
+    },
+    content: {
+      type: [String],
+      default: null
+    },
+  },
+
+  computed: {
+    isDisplayed: function(){
+      return {
+        'display-none': this.isInputtedFocused === false
+      }
+    }
+  },
+
+  methods: {
+    
+  }
+})
+
+Vue.component('content-area', contentArea);
+
 var app = new Vue({
   el: '#test-list',
   data: {
@@ -190,6 +273,9 @@ var app = new Vue({
         }
       }
     },
+    onFocus: function(e){
+      this.$emit('focused', e);
+    }
   },
   mounted: function(){
     //this.$set(this.postedData, this.postedData.length, {key: 'testKey', value: 'testValue'});
@@ -205,19 +291,51 @@ var app = new Vue({
 })
 
 
+
+
 var app = new Vue({
-  el: '#time-range-list',
+  el: '#main-container',
   data: {
     timeRangeArray: timeRangeArray,
-    timeRangePlaceholder: 'Add your schedule'
+    timeRangePlaceholder: 'Add your schedule',
+    isInputtedFocused: false,
+    title: 'dummy',
+    content: ''
   },
   components: {
-    'time-range' : timeRange,
-    't-input' : input
+    'time-range-list' : timeRangeList,
+    'content-area' : contentArea
   },
   methods: {
-    onFocusInnerInput: function(e){
-      console.log("focused?");
+    onFocus: function(e){
+      this.$el.classList.add('width-auto');
+      this.isInputtedFocused = true;
+      this.title = e.target.value;
     },
-  }
+    onInput: function(e){
+      this.title = e.target.value;
+    },
+    escapeKeyListener: function(e){
+      if (e.keyCode === 27 && this.isInputtedFocused) {
+        this.isInputtedFocused = false;
+      }
+    }
+  },
+  created: function() {
+    document.addEventListener('keyup', this.escapeKeyListener);
+  },
+  destroyed: function() {
+    document.removeEventListener('keyup', this.escapeKeyListener);
+  },
 })
+
+// あくまでpropとemitでやりとりする。
+
+
+var $table = document.getElementById("task-list-table");
+var $customList = document.getElementById("test-list");
+$table.appendChild($customList);
+
+var $table = document.getElementById("time-range-list-table");
+var $customList = document.getElementById("time-range-list");
+$table.appendChild($customList);

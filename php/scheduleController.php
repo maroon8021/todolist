@@ -168,27 +168,22 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         $dataHandler->execute(array('' ,$_POST['deletetodoid']));
 
         break;
-    }
-    
+    } 
+}else if($_SERVER['REQUEST_METHOD'] === 'GET'){
+    $dataHandler = new DataHandler(DSN, USER, PASSWORD);
+    switch($_POST['type']){
+        case 'task-complete-button':
+        $updateId = array_key_exists('updateid', $_POST) ? $_POST['updateid'] : null;
+        $isFiniched = array_key_exists('isfiniched', $_POST) ? (bool)$_POST['isfiniched'] : '';
 
-    
-    
-    
-    
+        $dataHandler->setActionType('update');
+        $dataHandler->setTargetTable('todo'); // const化したい
+        $dataHandler->setUpdateTarget('isfinished = ?');
+        $dataHandler->setQuery('todoid = ?');
+        $dataHandler->execute(array($isFiniched, $updateId));
 
-    //$article = $_POST['article'];
-    //$type = $_POST['type'];
-    //if($type == 'new-article'){
-        // $stmt = $dbh->prepare('UPDATE schedule set title = :is_finished where todoid = :update_id');
-    //}
-    //$stmt = $dbh->prepare("INSERT INTO article (content) VALUES (:value)"); // $dbh already has staff
-    //$stmt->bindParam(':name', $name, PDO::PARAM_STR);
-    //$stmt->bindValue(':value', 1, PDO::PARAM_INT);
-    //$stmt->bindValue(':value', $article, PDO::PARAM_STR);
-    //$stmt->execute();
-
-
-    
+        break;
+    } 
 }
 
 /**
