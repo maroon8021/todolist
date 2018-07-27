@@ -27,7 +27,7 @@ $scheduleController = new ScheduleController();
 $scheduleList = json_encode($scheduleController->getTodoData());
 $todoList = json_encode($scheduleController->getScheduleData());
 
-$_SESSION['dataStore'] = $todoList; //Storeする機構がほしい気がする
+$_SESSION['dataStore'] = $todoList; //TODO Storeする機構がほしい気がする
 
 ?>
 
@@ -70,17 +70,7 @@ $_SESSION['dataStore'] = $todoList; //Storeする機構がほしい気がする
             <th>Content</th>
           </tr>
         </thead>
-        <tbody id="test-list"  v-focus v-on:keyup.enter="onEnterLastInput" 
-          @keydown.delete="onDelete" @keydown.enter="onKeyDownEnter" @keypress.enter="onKeyPressEnter" >
-          <tr v-for="data in postedData">
-            <th>
-              <check-button :target-id="data.key" />
-            </th>
-            <td class="input-area">
-              <t-input :target-id="data.key" :value="data.value" :type="data.type" @focused='onFocus'/>
-            </td>
-          </tr>
-        </tbody>
+        <task-list :posted-data="postedData">
       </table>
     </div>
   </section>
