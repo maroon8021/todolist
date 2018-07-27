@@ -1,3 +1,6 @@
+// TODO Each components have to be excluded to other files
+
+// TODO need to change place of this method below
 var onClickButton = function (e) {
   let inputKey = this.$el.getAttribute('data-input-key');
   let params = new URLSearchParams();
@@ -11,7 +14,7 @@ var onClickButton = function (e) {
   });
 
 }
-
+// TODO need to change place of this method below
 var onChangeEvent = function (e) {
   let params = new URLSearchParams();
   let targetURL;
@@ -40,7 +43,10 @@ var onChangeEvent = function (e) {
   });
 }
 
-
+/**
+ * Input component for any situation
+ * Any features are added on this
+ */
 var input = Vue.extend({
   props:{
     placeholder: {
@@ -94,7 +100,9 @@ var input = Vue.extend({
 
 Vue.component('t-input', input);
 
-
+/**
+ * Check button to decide a task is done or not
+ */
 var checkButton = Vue.extend({
   data: function(){
     return {
@@ -132,6 +140,9 @@ var checkButton = Vue.extend({
 
 Vue.component('check-button', checkButton);
 
+/**
+ * time-range component this will show inputs separated by time
+ */
 var timeRange = Vue.extend({
   props:['timestr'],
   data:function(){
@@ -187,6 +198,9 @@ var timeRangeList = Vue.extend({
 Vue.component('time-range-list', timeRangeList);
 
 
+/**
+ * content area for showing detail
+ */
 var contentArea = Vue.extend({
   template: '<main class="column content-area" ' +
             ':class="isDisplayed" ' +
@@ -234,10 +248,30 @@ var contentArea = Vue.extend({
 
 Vue.component('content-area', contentArea);
 
-var app = new Vue({
-  el: '#test-list',
-  data: {
-    postedData: postedData
+/**
+ * task list
+ */
+var taskList = Vue.extend({
+  template: `<tbody id="test-list"` +  
+            `v-focus v-on:keyup.enter="onEnterLastInput"` + 
+            `@keydown.delete="onDelete" @keydown.enter="onKeyDownEnter"` + 
+            `@keypress.enter="onKeyPressEnter"` + 
+            `>` +
+            `<tr v-for="data in postedData">` +
+            `<th>` +
+            `<check-button :target-id="data.key" />` +
+            `</th>` +
+            `<td class="input-area">` +
+            `<t-input :target-id="data.key" :value="data.value"` + 
+            `:type="data.type" @focused='onFocus'/>` +
+            `</td>` +
+            `</tr>` +
+            `</tbody>`,
+  props: {
+    postedData: {
+      type: [Array],
+      default: null
+    }
   },
   components: {
     'check-button' : checkButton,
@@ -290,9 +324,12 @@ var app = new Vue({
   },
 })
 
+Vue.component('task-list', taskList);
 
 
-
+/**
+ * Main component on schedule
+ */
 var app = new Vue({
   el: '#main-container',
   data: {
@@ -300,11 +337,13 @@ var app = new Vue({
     timeRangePlaceholder: 'Add your schedule',
     isInputtedFocused: false,
     title: 'dummy',
+    postedData: postedData,
     content: ''
   },
   components: {
     'time-range-list' : timeRangeList,
-    'content-area' : contentArea
+    'content-area' : contentArea,
+    'task-list' : taskList
   },
   methods: {
     onFocus: function(e){
@@ -329,13 +368,19 @@ var app = new Vue({
   },
 })
 
-// あくまでpropとemitでやりとりする。
+afterRendered();
 
+// Some functions below
 
-var $table = document.getElementById("task-list-table");
-var $customList = document.getElementById("test-list");
-$table.appendChild($customList);
-
-var $table = document.getElementById("time-range-list-table");
-var $customList = document.getElementById("time-range-list");
-$table.appendChild($customList);
+/**
+ * after all of vue methods called
+ */
+function afterRendered(){
+  var $table = document.getElementById("task-list-table");
+  var $customList = document.getElementById("test-list");
+  $table.appendChild($customList);
+  
+  var $table = document.getElementById("time-range-list-table");
+  var $customList = document.getElementById("time-range-list");
+  $table.appendChild($customList);
+}

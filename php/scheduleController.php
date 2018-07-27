@@ -171,6 +171,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
     } 
 }else if($_SERVER['REQUEST_METHOD'] === 'GET'){
     $dataHandler = new DataHandler(DSN, USER, PASSWORD);
+    return;
     switch($_POST['type']){
         case 'task-complete-button':
         $updateId = array_key_exists('updateid', $_POST) ? $_POST['updateid'] : null;
