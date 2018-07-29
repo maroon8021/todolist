@@ -9,6 +9,7 @@ class DataHandler{
     protected $targetColumns;
     protected $updateTarget;
     protected $query = '';
+    protected $column = '*';
 
     public function __construct($dsn, $user, $password) {
         $this->dbh = new PDO($dsn, $user, $password, array(
@@ -53,6 +54,13 @@ class DataHandler{
     }
 
     /**
+     * @param {String} $updateTarget
+     */
+    public function setColumn($column) {
+        $this->column = $column;
+    }
+
+    /**
      * @return {String} id
      */
     public function getLastInsertedId() {
@@ -68,7 +76,7 @@ class DataHandler{
         try{
             switch($this->actionType){
                 case 'select':
-                $this->stmt = $this->dbh->prepare("SELECT * FROM $this->targetTable $this->query");
+                $this->stmt = $this->dbh->prepare("SELECT $this->column FROM $this->targetTable $this->query");
                 break;
 
                 case 'insert':
