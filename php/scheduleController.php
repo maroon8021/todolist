@@ -43,8 +43,8 @@ class ScheduleController{
         $dataHandler->setQuery('WHERE isfinished IS false');
         $dataHandler->execute();
         
-        $rowTodoList = $dataHandler->fetchAll(); //fetchAllってなんだっけ？
-        foreach ($rowTodoList as $todo) { //なんかこの辺ってよろしくやってくれそうなmethodありそう
+        $rowTodoList = $dataHandler->fetchAll();
+        foreach ($rowTodoList as $todo) {
             array_push($todoList, array(
                 'key' => $todo['todoid'],
                 'value' => $todo['title'],
@@ -168,20 +168,31 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         $dataHandler->execute(array('' ,$_POST['deletetodoid']));
 
         break;
+
+        case 'update-comment':
+        $dataHandler->setActionType('update');
+        $dataHandler->setTargetTable('schedule');
+        $dataHandler->setUpdateTarget('comments = ?');
+        $dataHandler->setQuery('scheduleid = ?');
+        $dataHandler->execute(array($_POST['comment'] ,$_POST['targetId']));
+
+        break;
     } 
 }else if($_SERVER['REQUEST_METHOD'] === 'GET'){
+    if(!array_key_exists('type', $_GET)){
+        return;
+    }
     $dataHandler = new DataHandler(DSN, USER, PASSWORD);
-    return;
-    switch($_POST['type']){
-        case 'task-complete-button':
-        $updateId = array_key_exists('updateid', $_POST) ? $_POST['updateid'] : null;
-        $isFiniched = array_key_exists('isfiniched', $_POST) ? (bool)$_POST['isfiniched'] : '';
+    switch($_GET['type']){
+        case 'content':
+        $dataHandler->setActionType('select');
+        $dataHandler->setTargetTable('schedule');
+        $dataHandler->setQuery('WHERE scheduleid = '.$_GET['targetId']);
+        $dataHandler->setColumn('comments');
+        $dataHandler->execute();
 
-        $dataHandler->setActionType('update');
-        $dataHandler->setTargetTable('todo'); // const化したい
-        $dataHandler->setUpdateTarget('isfinished = ?');
-        $dataHandler->setQuery('todoid = ?');
-        $dataHandler->execute(array($isFiniched, $updateId));
+        $rowComment = $dataHandler->fetchAll();
+        echo json_encode($rowComment[0]['comments']);
 
         break;
     } 

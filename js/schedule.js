@@ -89,6 +89,7 @@ var input = Vue.extend({
     onChange: onChangeEvent,
     onFocus: function(e){
       console.log("focused");
+      e.data = this.targetId
       this.$emit('focused', e);
     },
     onInput: function(e){
@@ -213,7 +214,7 @@ var contentArea = Vue.extend({
             '<div class="panel-block">' +
             '<p class="control">' +
             '<textarea class="textarea is-info content-area-textarea" ' + 
-              'type="text" placeholder="Input any contents" :value="content"></textarea> ' +
+              'type="text" placeholder="Input any contents" :value="content" v-on:change="onChange"></textarea> ' +
             '</p>' +
             '</div>' +
             '</nav>' +
@@ -231,6 +232,10 @@ var contentArea = Vue.extend({
       type: [String],
       default: null
     },
+    targetId: {
+      type: [String, Number],
+      default: null
+    }
   },
 
   computed: {
@@ -242,7 +247,17 @@ var contentArea = Vue.extend({
   },
 
   methods: {
-    
+    onChange: function(e){
+      let params = new URLSearchParams();
+      params.append('type', 'update-comment');
+      params.append('targetId', this.targetId);
+      params.append('comment', e.target.value);
+      targetURL = 'php/scheduleController.php';
+      axios.post(targetURL, params).then(response => {
+        console.log(response.status);
+        console.log(response);
+      });
+    }
   }
 })
 
@@ -338,7 +353,8 @@ var app = new Vue({
     isInputtedFocused: false,
     title: 'dummy',
     postedData: postedData,
-    content: ''
+    content: '',
+    targetId: ''
   },
   components: {
     'time-range-list' : timeRangeList,
@@ -350,6 +366,17 @@ var app = new Vue({
       this.$el.classList.add('width-auto');
       this.isInputtedFocused = true;
       this.title = e.target.value;
+      this.targetId = e.data;
+
+      // contentの呼び出し
+      let params = new URLSearchParams();
+      params.append('targetId', e.data);
+      params.append('type', 'content');
+      axios.get('php/scheduleController.php', {params}).then(response => {
+        console.log(response.status);
+        console.log(response);
+        this.content = response.data;
+      });
     },
     onInput: function(e){
       this.title = e.target.value;

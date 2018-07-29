@@ -92,7 +92,7 @@ $_SESSION['dataStore'] = $todoList; //TODO Storeする機構がほしい気が�
   </section>
 
 </main>
-<content-area :is-inputted-focused='isInputtedFocused' :title='title' />
+<content-area :is-inputted-focused='isInputtedFocused' :title='title' :content='content' :target-id='targetId'/>
 
 </div>
 
