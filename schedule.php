@@ -40,9 +40,26 @@ $_SESSION['dataStore'] = $todoList; //TODO Storeする機構がほしい気が�
 </script>
 
 
-
-
 <body class="layout-documentation page-layout has-navbar-fixed-top">
+
+<link rel="stylesheet" href="css/loading-spinner.css">
+<div id="initial-layer" >
+  <div class="lds-roller">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+</div>
+<style type="text/css">
+
+
+</style>
+
   <nav class="navbar is-fixed-top has-shadow" role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
     <a class="navbar-item" href="#">
