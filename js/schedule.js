@@ -389,6 +389,7 @@ var app = new Vue({
   },
   created: function() {
     document.addEventListener('keyup', this.escapeKeyListener);
+    document.body.removeChild(document.getElementById("initial-layer"));
   },
   destroyed: function() {
     document.removeEventListener('keyup', this.escapeKeyListener);

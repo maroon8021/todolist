@@ -83,12 +83,11 @@ class ScheduleController{
      * 日付も消す
      */
     private function initialize($dataHandler){
-        // TODO
         $dataHandler->setActionType('update');
         $today = date("Y/m/d");
-        $dataHandler->setUpdateTarget('title = ?, time_stamp = ?');
+        $dataHandler->setUpdateTarget('title = ?, comments = ?, time_stamp = ?');
         $dataHandler->setQuery('time_stamp != ?');
-        $dataHandler->execute(array('','',$today));
+        $dataHandler->execute(array('','','',$today));
         $dataHandler->setQuery('');
         
     }
