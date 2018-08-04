@@ -13,6 +13,10 @@ table td.input-area{
   padding-bottom: 0px;
 }
 
+body{
+  overflow-x: hidden;
+}
+
 html, body, .main-area{
   height: 100%;
 }
