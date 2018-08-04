@@ -389,7 +389,13 @@ var app = new Vue({
   },
   created: function() {
     document.addEventListener('keyup', this.escapeKeyListener);
-    document.body.removeChild(document.getElementById("initial-layer"));
+    
+    // This is just added to show loading-spinner
+    // If I get board to see it, this will be removed
+    setTimeout(function(){
+      document.body.removeChild(document.getElementById("initial-layer"));
+      document.getElementById("main-container").classList.remove('display-none');
+    }, 2000);
   },
   destroyed: function() {
     document.removeEventListener('keyup', this.escapeKeyListener);

@@ -31,6 +31,9 @@ $_SESSION['dataStore'] = $todoList; //TODO Storeする機構がほしい気が�
 
 ?>
 
+<style type="text/css">
+</style>
+
 
 <script type="text/javascript">
 
@@ -55,10 +58,6 @@ $_SESSION['dataStore'] = $todoList; //TODO Storeする機構がほしい気が�
     <div></div>
   </div>
 </div>
-<style type="text/css">
-
-
-</style>
 
   <nav class="navbar is-fixed-top has-shadow" role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
@@ -74,7 +73,7 @@ $_SESSION['dataStore'] = $todoList; //TODO Storeする機構がほしい気が�
   </div>
 </nav>
 
-<div id="main-container" class="columns main-area">
+<div id="main-container" class="columns main-area display-none">
 <main class="bd-main column list-area">
   <section class="section">
     <div class="container">
