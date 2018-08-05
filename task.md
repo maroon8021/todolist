@@ -1,22 +1,7 @@
 #Remain tasks
-- やることまとめ / switch private - business
-
-- refactor delete logic -> postedDataにないからか
-- + button
-
-- Install Froala to article.php
-
-
--- Solving by Laravel × vuex --
-- Prevent dupricated tags
-- Feature of Store?
-- Routing?
-- MVC?
-- body以下のscriptタグのまとめあげたい
-
-
-- How can I use "try?"
-- Lazy load
+- trim error strings
+- alert modal for unacceptable strings errors
+https://bulma.io/documentation/components/modal/
 
 #Fixed tasks
 - Create time-range object by server-side

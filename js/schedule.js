@@ -20,6 +20,7 @@ var onChangeEvent = function (e) {
   let targetURL;
   let inputKey = e.target.getAttribute('data-input-key');
   let action = '';
+  let inputtedValue = null;
   if(e.target.value === ''){
     params.append('deletetodoid', inputKey);
     action = 'delete-';
@@ -31,15 +32,22 @@ var onChangeEvent = function (e) {
         return;
       } 
     }
-    params.append('new_value', e.target.value);
+    inputtedValue = e.target.value;
+    params.append('new_value', inputtedValue);
     params.append('key', inputKey);
     action = targetIndex === null ? 'new-' : 'update-';
   }
   targetURL = 'php/scheduleController.php';
   params.append('type', action + e.target.getAttribute('data-type'));
-  axios.post(targetURL, params).then(response => {
+  axios.post(targetURL, params)
+  .then(response => {
     console.log(response.status);
     console.log(response);
+  })
+  .catch(error => {
+    console.log(error.response);
+    window.alert('There are unacceptable strings\n please fix and input it again\n' +
+    inputtedValue);
   });
 }
 
@@ -249,13 +257,20 @@ var contentArea = Vue.extend({
   methods: {
     onChange: function(e){
       let params = new URLSearchParams();
+      let inputtedValue = e.target.value;
       params.append('type', 'update-comment');
       params.append('targetId', this.targetId);
       params.append('comment', e.target.value);
       targetURL = 'php/scheduleController.php';
-      axios.post(targetURL, params).then(response => {
+      axios.post(targetURL, params)
+      .then(response => {
         console.log(response.status);
         console.log(response);
+      })
+      .catch(error => {
+        console.log(error.response);
+        window.alert('There are unacceptable strings\n please fix and input it again\n' +
+        inputtedValue);
       });
     }
   }
