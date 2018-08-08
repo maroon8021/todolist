@@ -108,7 +108,10 @@ $_SESSION['dataStore'] = $todoList; //TODO Storeする機構がほしい気が�
   </section>
 
 </main>
-<content-area :is-inputted-focused='isInputtedFocused' :title='title' :content='content' :target-id='targetId'/>
+<content-area :is-inputted-focused='isInputtedFocused' :title='title' :content='content' :target-id='targetId' 
+@reject-save='showErrorMessage'></content-area>
+<modal :is-active='isModalActive' :text='errorMessage' @close='onClose'></modal>
+
 
 </div>
 
