@@ -1,7 +1,6 @@
 #Remain tasks
-- trim error strings
-- alert modal for unacceptable strings errors
-https://bulma.io/documentation/components/modal/
+- trim error strings?
+- Changing order
 
 #Fixed tasks
 - Create time-range object by server-side

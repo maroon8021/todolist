@@ -46,8 +46,9 @@ var onChangeEvent = function (e) {
   })
   .catch(error => {
     console.log(error.response);
-    window.alert('There are unacceptable strings\n please fix and input it again\n' +
-    inputtedValue);
+    // window.alert('There are unacceptable strings\n please fix and input it again\n' +
+    // inputtedValue);
+    this.$emit('reject-save', inputtedValue);
   });
 }
 
@@ -208,6 +209,53 @@ Vue.component('time-range-list', timeRangeList);
 
 
 /**
+ * time-range component this will show inputs separated by time
+ */
+var modal = Vue.extend({
+  props:['isActive', 'text'],
+
+  template:'<div class="modal" :class="isActiveClass" @click="onClose">' +
+             '<div class="modal-background"></div>' +
+             '<div class="modal-content">' +
+               '<article class="message is-danger">' +
+               '<div class="message-header">'+
+               '<p>Danger : Fix and write it again</p>'+
+               '<button class="delete" aria-label="delete"></button>'+
+               '</div>'+
+               '<div class="message-body">' +
+               '{{errorText}}' +
+               '</div>'+
+               '</article>'+
+             '</div>' +
+             '<button class="modal-close is-large" aria-label="close" ' +
+              '@click="onClose">' +
+             '</button>' +
+           '</div>',
+  
+   computed: {
+     isActiveClass: function(){
+       return {
+         'is-active': this.isActive === true
+        }
+      },
+      errorText: function(){
+        return this.text;
+      }
+    },
+    methods: {
+      onClose: function(e){
+        if(!e.target.classList.contains("message-body")){
+          this.$emit('close');
+        }
+      }
+    }
+  
+})
+
+Vue.component('modal', modal);
+
+
+/**
  * content area for showing detail
  */
 var contentArea = Vue.extend({
@@ -269,8 +317,9 @@ var contentArea = Vue.extend({
       })
       .catch(error => {
         console.log(error.response);
-        window.alert('There are unacceptable strings\n please fix and input it again\n' +
-        inputtedValue);
+        // window.alert('There are unacceptable strings\n please fix and input it again\n' +
+        // inputtedValue);
+        this.$emit('reject-save', inputtedValue);
       });
     }
   }
@@ -369,12 +418,15 @@ var app = new Vue({
     title: 'dummy',
     postedData: postedData,
     content: '',
-    targetId: ''
+    targetId: '',
+    isModalActive: false,
+    errorMessage: ''
   },
   components: {
     'time-range-list' : timeRangeList,
     'content-area' : contentArea,
-    'task-list' : taskList
+    'task-list' : taskList,
+    'modal' : modal
   },
   methods: {
     onFocus: function(e){
@@ -400,6 +452,13 @@ var app = new Vue({
       if (e.keyCode === 27 && this.isInputtedFocused) {
         this.isInputtedFocused = false;
       }
+    },
+    showErrorMessage: function(e){
+      this.isModalActive = true;
+      this.errorMessage = e;
+    },
+    onClose: function(e){
+      this.isModalActive = false;
     }
   },
   created: function() {
