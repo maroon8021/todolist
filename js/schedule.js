@@ -337,9 +337,10 @@ var taskList = Vue.extend({
             `@keypress.enter="onKeyPressEnter"` + 
             `>` +
             `<tr v-for="data in postedData">` +
-            `<th>` +
+            `<td class="dragger-pposition"><i class="fas fa-sort"></i></td>` +
+            `<td>` +
             `<check-button :target-id="data.key" />` +
-            `</th>` +
+            `</td>` +
             `<td class="input-area">` +
             `<t-input :target-id="data.key" :value="data.value"` + 
             `:type="data.type" @focused='onFocus'/>` +

@@ -82,6 +82,7 @@ $_SESSION['dataStore'] = $todoList; //TODO Storeする機構がほしい気が�
       <table class="table" id="task-list-table">
         <thead>
           <tr>
+            <th></th>
             <th><abbr title="Position">Check</abbr></th>
             <th>Content</th>
           </tr>
