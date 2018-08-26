@@ -46,7 +46,11 @@ html, body, .main-area{
   background-color: #fff7d7;
 }
 
-.table td.dragger-pposition{
+.table td.dragger-position{
   padding-top: 14px;
   cursor: move;
+}
+
+.table .hovered tr:hover td{
+  border-bottom: 2px solid #f4eb42;
 }

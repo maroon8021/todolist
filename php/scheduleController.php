@@ -23,6 +23,8 @@ define('TIME_RANGE', array(
  *  └ todoid
  *  └ title
  *  └ isFinished
+ *  └ before_todo
+ *  └ after_todo
  * -schedule
  *  └ scheduleid
  *  └ title
@@ -48,7 +50,9 @@ class ScheduleController{
             array_push($todoList, array(
                 'key' => $todo['todoid'],
                 'value' => $todo['title'],
-                'type' => 'todo'
+                'type' => 'todo',
+                'before-todo' => $todo['before_todo'],
+                'after-todo' => $todo['after_todo']
             ));
         }
         return $todoList;

@@ -37,7 +37,7 @@ $_SESSION['dataStore'] = $todoList; //TODO Storeする機構がほしい気が�
 
 <script type="text/javascript">
 
-  var postedData = JSON.parse('<?php echo $scheduleList; ?>');
+  var rowPostedData = JSON.parse('<?php echo $scheduleList; ?>');
   var timeRangeArray = JSON.parse('<?php echo $todoList; ?>');
 
 </script>
