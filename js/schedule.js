@@ -1,5 +1,19 @@
 // TODO Each components have to be excluded to other files
 
+// Initialize order of todo
+let postedData = [];
+let targetKey = 0;
+let postedDataObj = {};
+rowPostedData.forEach(data => {
+  postedDataObj[data['key']] = data;
+  targetKey = data['before-todo'] === 0 ? data.key : targetKey;
+});
+for (let index = 0; index < Object.keys(postedDataObj).length; index++) {
+  postedData.push(postedDataObj[targetKey]);
+  targetKey = postedDataObj[targetKey]['after-todo'];
+}
+
+
 // TODO need to change place of this method below
 var onClickButton = function (e) {
   let inputKey = this.$el.getAttribute('data-input-key');
@@ -334,12 +348,16 @@ var taskList = Vue.extend({
   template: `<tbody id="test-list"` +  
             `v-focus v-on:keyup.enter="onEnterLastInput"` + 
             `@keydown.delete="onDelete" @keydown.enter="onKeyDownEnter"` + 
-            `@keypress.enter="onKeyPressEnter"` + 
+            `@keypress.enter="onKeyPressEnter"` +
+            `:class="hover"` + 
             `>` +
             `<tr v-for="data in postedData">` +
-            `<th>` +
+            `<td class="dragger-position" @mousedown="onMouseDown" ` +
+            `@mouseup="onMouseUp">` +
+            `<i class="fas fa-sort"></i></td>` +
+            `<td>` +
             `<check-button :target-id="data.key" />` +
-            `</th>` +
+            `</td>` +
             `<td class="input-area">` +
             `<t-input :target-id="data.key" :value="data.value"` + 
             `:type="data.type" @focused='onFocus'/>` +
@@ -352,6 +370,21 @@ var taskList = Vue.extend({
       default: null
     }
   },
+  data: function(){
+    return {
+      isHovered : false,
+      hoverClass : false,
+      hoveringTarget : null
+    }
+  },
+  computed: {
+    hover: function(){
+      return {
+        'hovered': this.hoverClass === true
+      }
+    }
+  },
+
   components: {
     'check-button' : checkButton,
     't-input' : input
@@ -387,15 +420,89 @@ var taskList = Vue.extend({
       }
     },
     onFocus: function(e){
+      if(this.isHovered){
+        return;
+      }
       this.$emit('focused', e);
-    }
+    },
+    onMouseDown: function(e){
+      console.log('hoge');
+      this.isHovered = true;
+      let $hoveringElement = e.target;
+      setTimeout(() => {
+        if(this.isHovered){
+          this.hoverClass = true;
+          for (let index = 0; index < 4; index++) { //TODO fix 4
+            if($hoveringElement.tagName !== 'TR'){
+              $hoveringElement = $hoveringElement.parentElement;
+            }else{
+              let $hoveringInput = $hoveringElement.querySelector('input');
+              this.hoveringTarget = parseInt($hoveringInput.dataset.inputKey, 10);
+            }
+            
+          }
+        }
+      }, 1000); //.bind(this)
+      //this.$emit('focused', e);
+      e.preventDefault();
+    },
+    onMouseUp: function(e){
+      this.hoverClass = false;
+      this.isHovered = false;
+      var $targetElement = e.target;
+      for (let index = 0; index < 3; index++) { //TODO fix 3
+        if($targetElement.tagName !== 'TR'){
+          $targetElement = $targetElement.parentElement;
+        }else{
+          let $targetInput = $targetElement.querySelector('input');
+          let targetKey = parseInt($targetInput.dataset.inputKey, 10);
+          if(this.hoveringTarget === targetKey){
+            return;
+          }
+          let previousAfterTodoKey;
+          for (let index = 0; index < this.postedData.length; index++) {
+            if(this.postedData[index].key === targetKey){
+              previousAfterTodoKey = this.postedData[index]['after-todo'];
+              this.postedData[index]['after-todo'] = this.hoveringTarget;
+              this.postedData[this.hoveringTarget]['before-todo'] = targetKey;
+              this.postedData[this.hoveringTarget]['after-todo'] = previousAfterTodoKey;
+              this.postedData[previousAfterTodoKey]['before-todo'] = this.hoveringTarget;
+            }
+          }
+
+          let newKey = this.postedData[0].key === this.hoveringTarget ? this.postedData[0]['after-todo'] : this.postedData[0].key;
+
+          for (let index = 0; index < this.postedData.length; index++) {
+            if(index === 0){
+              this.postedData[newKey]['before-todo'] = 0;
+            }else if(index === this.postedData.length - 1){
+              this.postedData[newKey]['after-todo'] = -1;
+            }
+
+            this.$set(this.postedData, index, this.postedData[newKey]);
+            newKey = this.postedData[newKey]['after-todo'];
+          }
+
+        }
+        
+      }
+      this.hoveringTarget = null;
+    },
+
   },
+  /*
   mounted: function(){
-    //this.$set(this.postedData, this.postedData.length, {key: 'testKey', value: 'testValue'});
+    console.log('mounted');
+    this.$el.addEventListener('touchstart', this.onMouseDown, false);
+    this.$el.addEventListener('mousedown', this.onMouseDown);
   },
+  */
   directives: {
     focus : {
-      componentUpdated : function(el){
+      componentUpdated : function(el, binding, vnode){
+        if(vnode.context.isHovered){
+          return;
+        }
         let $inputs = el.getElementsByClassName('input-area');
         $inputs[$inputs.length - 1].focus();
       }
@@ -492,3 +599,4 @@ function afterRendered(){
   var $customList = document.getElementById("time-range-list");
   $table.appendChild($customList);
 }
+

@@ -41,3 +41,16 @@ html, body, .main-area{
 .display-none{
   display: none!important;
 }
+
+.input-focused-bg-color{
+  background-color: #fff7d7;
+}
+
+.table td.dragger-position{
+  padding-top: 14px;
+  cursor: move;
+}
+
+.table .hovered tr:hover td{
+  border-bottom: 2px solid #f4eb42;
+}
