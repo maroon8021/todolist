@@ -1,0 +1,48 @@
+{
+  "name": "todolist",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack-dev-server --config ./webpack.config.js --hot --host 0.0.0.0",
+    "build": "webpack --config ./webpack.config.js --env.production -p",
+    "start": "webpack-dev-server --config ./webpack.config.js --env.production --host 0.0.0.0"
+  },
+  "repository": "git+https://github.com/maroon8021/todolist.git",
+  "keywords": [],
+  "author": "mitsui_t",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/maroon8021/todolist/issues"
+  },
+  "homepage": "https://github.com/maroon8021/todolist#readme",
+  "dependencies": {
+    "@babel/core": "^7.1.0",
+    "babel": "^6.23.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.0.2",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "express": "^4.16.3",
+    "mysql2": "^1.6.1",
+    "vue": "^2.5.17",
+    "vue-loader": "^14.2.2",
+    "vue-router": "^3.0.1",
+    "vue-template-compiler": "^2.5.17",
+    "vuex": "^3.0.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "css-loader": "^1.0.0",
+    "eslint": "^5.6.0",
+    "eslint-plugin-react": "^7.11.1",
+    "node-sass": "^4.9.3",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.23.0",
+    "url-loader": "^1.1.1",
+    "webpack": "^4.19.1",
+    "webpack-cli": "^3.1.0",
+    "webpack-dev-server": "^3.1.8"
+  }
+}
