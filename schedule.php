@@ -103,14 +103,14 @@ $_SESSION['dataStore'] = $todoList; //TODO Storeする機構がほしい気が�
             <th>Content</th>
           </tr>
         </thead>
-        <time-range-list :time-range-array='timeRangeArray' @focused='onFocus' @input='onInput'/>
+        <time-range-list :time-range-array='timeRangeArray' @focused='onFocus' @input='onInput' @move-focus='onMoveFocus'/>
       </table>
     </div>
   </section>
 
 </main>
-<content-area :is-inputted-focused='isInputtedFocused' :title='title' :content='content' :target-id='targetId' 
-@reject-save='showErrorMessage'></content-area>
+<content-area :is-content-area-focused='isContentAreaFocused' :is-inputted-focused='isInputtedFocused' :title='title' :content='content' :target-id='targetId' 
+@reject-save='showErrorMessage' @move-focus='onMoveFocus'></content-area>
 <modal :is-active='isModalActive' :text='errorMessage' @close='onClose'></modal>
 
 
