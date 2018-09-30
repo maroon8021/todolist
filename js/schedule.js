@@ -106,6 +106,7 @@ var input = Vue.extend({
            'v-on:focus="onFocus" '+
            'v-on:change="onChange" '+
            'v-on:input="onInput" '+
+           '@keyup.right="onMoveFocus" '+
            '/>',
 
   methods: {
@@ -118,7 +119,17 @@ var input = Vue.extend({
     onInput: function(e){
       console.log("inputting");
       this.$emit('input', e);
+    },
+    onMoveFocus: function(e){
+      console.log("called");
+      // TODO: need to support 'meta' key
+      if(e.altKey === false || e.ctrlKey === false){
+        return false;
+      }
+      e.data = this.$el;
+      this.$emit('move-focus', e);
     }
+
   }
 })
 
@@ -190,7 +201,7 @@ var timeRangeList = Vue.extend({
             '<time-range :timestr="pertime.timeRange"/>' +
             '</th>' +
             '<td class="input-area">' +
-            '<t-input @focused="onFocusInnerInput" @input="onInput" :target-id="pertime.key" :value="pertime.value" :type="pertime.type" :placeholder="timeRangePlaceholder"/>' +
+            '<t-input @focused="onFocusInnerInput" @input="onInput" @move-focus="onMoveFocus" :target-id="pertime.key" :value="pertime.value" :type="pertime.type" :placeholder="timeRangePlaceholder"/>' +
             '</td>' +
             '</tr>' +
             '</tbody>',
@@ -215,6 +226,9 @@ var timeRangeList = Vue.extend({
     },
     onInput: function(e){
       this.$emit('input', e);
+    },
+    onMoveFocus: function(e){
+      this.$emit('move-focus', e);
     }
   }
 })
@@ -275,7 +289,7 @@ Vue.component('modal', modal);
 var contentArea = Vue.extend({
   template: '<main class="column content-area" ' +
             ':class="isDisplayed" ' +
-            // '@keypress.esc="onKeydownESC" ' +
+            '@keyup.left="onMoveFocus" ' +
             ' >' +
             '<nav class="panel">' +
             '<p class="panel-heading">' +
@@ -305,6 +319,10 @@ var contentArea = Vue.extend({
     targetId: {
       type: [String, Number],
       default: null
+    },
+    isContentAreaFocused: {
+      type: [Boolean],
+      default: false
     }
   },
 
@@ -312,6 +330,15 @@ var contentArea = Vue.extend({
     isDisplayed: function(){
       return {
         'display-none': this.isInputtedFocused === false
+      }
+    }
+  },
+
+  watch: {
+    isContentAreaFocused: function(val){
+      if(val){
+        let $textarea = this.$el.getElementsByTagName('textarea')[0];
+        $textarea.focus();
       }
     }
   },
@@ -335,6 +362,15 @@ var contentArea = Vue.extend({
         // inputtedValue);
         this.$emit('reject-save', inputtedValue);
       });
+    },
+    onMoveFocus: function(e){
+      console.log("called");
+      // TODO: need to support 'meta' key
+      if(e.altKey === false || e.ctrlKey === false){
+        return false;
+      }
+      e.isCalledFromContentArea = true;
+      this.$emit('move-focus', e);
     }
   }
 })
@@ -527,7 +563,9 @@ var app = new Vue({
     content: '',
     targetId: '',
     isModalActive: false,
-    errorMessage: ''
+    errorMessage: '',
+    targetScheduleInput: '',
+    isContentAreaFocused: false
   },
   components: {
     'time-range-list' : timeRangeList,
@@ -566,6 +604,17 @@ var app = new Vue({
     },
     onClose: function(e){
       this.isModalActive = false;
+    },
+    onMoveFocus: function(e){
+      console.log('called');
+      if(e.isCalledFromContentArea === undefined){
+        this.targetScheduleInput = e.data;
+        this.isContentAreaFocused = true;
+      }else{
+        this.targetScheduleInput.focus();
+        this.isContentAreaFocused = false;
+      }
+      
     }
   },
   created: function() {
