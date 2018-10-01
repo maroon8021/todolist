@@ -129,17 +129,17 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         case 'new-todo':
         $dataHandler->setActionType('insert'); // const化したい
         $dataHandler->setTargetTable('todo'); // const化したい
-        $dataHandler->setTargetColumns(array('title'));
-        $dataHandler->execute(array($_POST['new_value']));
+        $dataHandler->setTargetColumns(array('title', 'before_todo', 'after_todo'));
+        $dataHandler->execute(array($_POST['new_value'], $_POST['before-todo'], $_POST['after-todo']));
 
         break;
 
         case 'update-todo':
         $dataHandler->setActionType('update'); // const化したい
         $dataHandler->setTargetTable('todo'); // const化したい
-        $dataHandler->setUpdateTarget('title = ?');
+        $dataHandler->setUpdateTarget('title = ?, before_todo = ?, after_todo = ?');
         $dataHandler->setQuery('todoid = ?');
-        $dataHandler->execute(array($_POST['new_value'], $_POST['key']));
+        $dataHandler->execute(array($_POST['new_value'], $_POST['before-todo'], $_POST['after-todo'], $_POST['key']));
 
         break;
 
