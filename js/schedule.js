@@ -29,13 +29,13 @@ var onClickButton = function (e) {
 
 }
 // TODO need to change place of this method below
-var onChangeEvent = function (e) {
+var onChangeEvent = function (e, opt_isNewItem) {
   let params = new URLSearchParams();
   let targetURL;
   let inputKey = e.target.getAttribute('data-input-key');
   let action = '';
   let inputtedValue = null;
-  if(e.target.value === ''){
+  if(e.target.value === '' && !opt_isNewItem){
     params.append('deletetodoid', inputKey);
     action = 'delete-';
   }else{
@@ -432,9 +432,50 @@ var taskList = Vue.extend({
     onEnterLastInput: function(e){
       let $inputs = this.$el.getElementsByClassName('input-area');
       let $lastInput = $inputs[$inputs.length - 1];
-      if( $lastInput === e.target && this.isKeyPressed){
+      if($lastInput === e.target && this.isKeyPressed){
         let inputKey = parseInt(e.target.getAttribute('data-input-key'), 10);
-        this.$set(this.postedData, this.postedData.length, {key: String(inputKey + 1), value: '', type: 'todo'});
+        let previousLastData = this.postedData[this.postedData.length-1];
+        let newItemKey = String(inputKey + 1);
+        previousLastData['after-todo'] = newItemKey;
+        this.$set(this.postedData, this.postedData.length, 
+          {
+            key: newItemKey, 
+            value: '', 
+            type: 'todo',
+            'before-todo': previousLastData.key,
+            'after-todo': -1
+          }
+        );
+        let params = new URLSearchParams();
+        let targetURL;
+        let inputKey = newItemKey;
+        // let action = '';
+        let inputtedValue = null;
+        //var targetIndex = null;
+        for (let index = 0; index < postedData.length; index++) {
+          targetIndex = parseInt(inputKey, 10) === postedData[index].key ? index : targetIndex;
+                if(inputKey === postedData[index].key && e.target.value === postedData[index].value){
+                  return;
+                } 
+              }
+    inputtedValue = e.target.value;
+    params.append('new_value', inputtedValue);
+    params.append('key', inputKey);
+    action = targetIndex === null ? 'new-' : 'update-';
+  }
+  targetURL = 'php/scheduleController.php';
+  params.append('type', 'new-' + e.target.getAttribute('data-type'));
+  axios.post(targetURL, params)
+  .then(response => {
+    console.log(response.status);
+    console.log(response);
+  })
+  .catch(error => {
+    console.log(error.response);
+    // window.alert('There are unacceptable strings\n please fix and input it again\n' +
+    // inputtedValue);
+    this.$emit('reject-save', inputtedValue);
+  });
       }
     },
     onKeyDownEnter: function(e){
