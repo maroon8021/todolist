@@ -84,7 +84,7 @@ class DataHandler{
                 $placeholders = $this->getPlaceHolders();
                 $this->stmt = $this->dbh->prepare("INSERT INTO $this->targetTable ($columns) VALUES ($placeholders)");
 
-                for ($i=0; $i < count($this->targetColumns); $i++) { 
+                for ($i=0; $i < count($this->targetColumns); $i++) {
                     $this->stmt->bindValue($i+1, $contents[$i], PDO::PARAM_STR);
                 }
                 break;
@@ -132,7 +132,7 @@ class DataHandler{
          $result = '';
          $index = 1;
          foreach ($this->targetColumns as $targetColumn) {
-            $result = $index != count($this->targetColumns) ? $result.$targetColumn.',' : $result.$targetColumn;
+            $result = $index != count($this->targetColumns) ? $result.$targetColumn.', ' : $result.$targetColumn;
             $index++;
         }
         return $result;
@@ -142,7 +142,7 @@ class DataHandler{
         $result = '';
         $index = 1;
         foreach ($this->targetColumns as $targetColumn) {
-            $result = $index != count($this->targetColumns) ? $result.'?,' : $result.'?';
+            $result = $index != count($this->targetColumns) ? $result.'?, ' : $result.'?';
             $index++;
        }
        return $result;

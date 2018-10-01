@@ -49,6 +49,8 @@ var onChangeEvent = function (e, opt_isNewItem) {
     inputtedValue = e.target.value;
     params.append('new_value', inputtedValue);
     params.append('key', inputKey);
+    params.append('before-todo', this.postedData[targetIndex]['before-todo']);
+    params.append('after-todo', this.postedData[targetIndex]['after-todo']);
     action = targetIndex === null ? 'new-' : 'update-';
   }
   targetURL = 'php/scheduleController.php';
@@ -437,45 +439,45 @@ var taskList = Vue.extend({
         let previousLastData = this.postedData[this.postedData.length-1];
         let newItemKey = String(inputKey + 1);
         previousLastData['after-todo'] = newItemKey;
-        this.$set(this.postedData, this.postedData.length, 
-          {
-            key: newItemKey, 
-            value: '', 
-            type: 'todo',
-            'before-todo': previousLastData.key,
-            'after-todo': -1
-          }
-        );
         let params = new URLSearchParams();
-        let targetURL;
-        let inputKey = newItemKey;
-        // let action = '';
-        let inputtedValue = null;
-        //var targetIndex = null;
-        for (let index = 0; index < postedData.length; index++) {
-          targetIndex = parseInt(inputKey, 10) === postedData[index].key ? index : targetIndex;
-                if(inputKey === postedData[index].key && e.target.value === postedData[index].value){
-                  return;
-                } 
-              }
-    inputtedValue = e.target.value;
-    params.append('new_value', inputtedValue);
-    params.append('key', inputKey);
-    action = targetIndex === null ? 'new-' : 'update-';
-  }
-  targetURL = 'php/scheduleController.php';
-  params.append('type', 'new-' + e.target.getAttribute('data-type'));
-  axios.post(targetURL, params)
-  .then(response => {
-    console.log(response.status);
-    console.log(response);
-  })
-  .catch(error => {
-    console.log(error.response);
-    // window.alert('There are unacceptable strings\n please fix and input it again\n' +
-    // inputtedValue);
-    this.$emit('reject-save', inputtedValue);
-  });
+        let targetURL = 'php/scheduleController.php'; // Need to be CONST
+        params.append('key', previousLastData['key']);
+        params.append('new_value', previousLastData['value']);
+        params.append('type', 'update-todo');
+        params.append('before-todo', previousLastData['before-todo']);
+        params.append('after-todo', previousLastData['after-todo']);
+        axios.post(targetURL, params)
+        .then(response => {
+          this.$set(this.postedData, this.postedData.length, 
+            {
+              key: newItemKey, 
+              value: '', 
+              type: 'todo',
+              'before-todo': previousLastData.key,
+              'after-todo': -1
+            }
+          );
+          params.append('new_value', '');
+          params.append('type', 'new-todo');
+          params.append('before-todo', previousLastData.key);
+          params.append('after-todo', -1);
+          axios.post(targetURL, params)
+          .then(response => {
+            console.log(response.status);
+            console.log(response);
+          })
+          .catch(error => {
+            console.log(error.response);
+            this.$emit('reject-save', inputtedValue);
+          });
+        })
+        .catch(error => {
+          console.log(error.response);
+          this.$emit('reject-save', inputtedValue);
+        });
+
+
+        
       }
     },
     onKeyDownEnter: function(e){
