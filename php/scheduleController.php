@@ -131,6 +131,10 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         $dataHandler->setTargetTable('todo'); // const化したい
         $dataHandler->setTargetColumns(array('title', 'before_todo', 'after_todo'));
         $dataHandler->execute(array($_POST['new_value'], $_POST['before-todo'], $_POST['after-todo']));
+        // TODO : This below seems specific case...
+        // header("Content-Type: text/javascript; charset=utf-8");
+        $lastInsertedId = $dataHandler->getLastInsertedId();
+        echo json_encode($lastInsertedId);
 
         break;
 

@@ -108,6 +108,7 @@ class DataHandler{
             
             
             $this->stmt->execute();
+            //print_r($this->stmt->fetch());
 
         }catch (PDOException $e){
             print('Error:'.$e->getMessage());
