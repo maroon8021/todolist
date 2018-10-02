@@ -49,8 +49,8 @@ var onChangeEvent = function (e, opt_isNewItem) {
     inputtedValue = e.target.value;
     params.append('new_value', inputtedValue);
     params.append('key', inputKey);
-    params.append('before-todo', this.postedData[targetIndex]['before-todo']);
-    params.append('after-todo', this.postedData[targetIndex]['after-todo']);
+    params.append('before-todo', postedData[targetIndex]['before-todo']);
+    params.append('after-todo', postedData[targetIndex]['after-todo']);
     action = targetIndex === null ? 'new-' : 'update-';
   }
   targetURL = 'php/scheduleController.php';
@@ -441,26 +441,33 @@ var taskList = Vue.extend({
         previousLastData['after-todo'] = newItemKey;
         let params = new URLSearchParams();
         let targetURL = 'php/scheduleController.php'; // Need to be CONST
-        params.append('key', previousLastData['key']);
-        params.append('new_value', previousLastData['value']);
-        params.append('type', 'update-todo');
-        params.append('before-todo', previousLastData['before-todo']);
-        params.append('after-todo', previousLastData['after-todo']);
+        let lastInsertedId = null;
+
+        this.$set(this.postedData, this.postedData.length, 
+          {
+            key: newItemKey, 
+            value: '', 
+            type: 'todo',
+            'before-todo': previousLastData.key,
+            'after-todo': -1
+          }
+        );
+        params.append('new_value', '');
+        params.append('type', 'new-todo');
+        params.append('before-todo', previousLastData.key);
+        params.append('after-todo', -1);
         axios.post(targetURL, params)
         .then(response => {
-          this.$set(this.postedData, this.postedData.length, 
-            {
-              key: newItemKey, 
-              value: '', 
-              type: 'todo',
-              'before-todo': previousLastData.key,
-              'after-todo': -1
-            }
-          );
-          params.append('new_value', '');
-          params.append('type', 'new-todo');
-          params.append('before-todo', previousLastData.key);
-          params.append('after-todo', -1);
+          console.log(response.status);
+          console.log(response);
+          lastInsertedId = response.data;
+
+          params.append('key', previousLastData['key']);
+          params.append('new_value', previousLastData['value']);
+          params.append('type', 'update-todo');
+          params.append('before-todo', previousLastData['before-todo']);
+          params.append('after-todo', lastInsertedId);
+
           axios.post(targetURL, params)
           .then(response => {
             console.log(response.status);
