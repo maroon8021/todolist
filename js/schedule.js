@@ -17,6 +17,7 @@ for (let index = 0; index < Object.keys(postedDataObj).length; index++) {
 // TODO need to change place of this method below
 var onClickButton = function (e) {
   let inputKey = this.$el.getAttribute('data-input-key');
+  changeOrder(getItemData(postedData, parseInt(inputKey, 10)), 'delete');
   let params = new URLSearchParams();
   this.isSuccess = !this.isSuccess;
   params.append('isfiniched', this.isSuccess ? 1 : 0);
@@ -697,5 +698,51 @@ function afterRendered(){
   var $table = document.getElementById("time-range-list-table");
   var $customList = document.getElementById("time-range-list");
   $table.appendChild($customList);
+}
+
+/**
+ * 
+ * @param {*} targetItemData 
+ * @param {*} changeType 
+ * @param {*} optionalItemData 
+ */
+function changeOrder(targetItemData, changeType, optionalItemData){
+ switch (changeType) {
+   case 'add':
+   break;
+   
+   case 'delete':
+   let beforeKey = parseInt(targetItemData['before-todo'], 10);
+   let afterKey = parseInt(targetItemData['after-todo'], 10);
+   let beforeItem = getItemData(postedData, beforeKey);
+   let afterItem = getItemData(postedData, beforeKey);
+
+   if(!beforeItem){
+    beforeItem['after-todo'] = afterKey;
+   }
+   if(!afterItem){
+    afterItem['before-todo'] = beforeKey;
+   }
+   return [beforeItem, afterItem];
+   break;
+ 
+   default:
+   break;
+ } 
+}
+
+/**
+ * 
+ * @param {Array} data 
+ * @param {String} key 
+ */
+function getItemData(data, key){
+  let targetData = null;
+  data.forEach(item => {
+    if(item.key === key){
+      targetData = item;
+    }
+  });
+  return targetData;
 }
 
