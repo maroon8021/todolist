@@ -27,17 +27,55 @@ var onClickButton = function (e) {
     console.log(response);
   });
 
+  let actionType = this.isSuccess ? 'delete' : 'uncheck' ;
+  let targetItems = changeOrder(getItemData(postedData, parseInt(inputKey, 10)), actionType);
+  for (let index = 0; index < targetItems.length; index++) {
+    params = new URLSearchParams();
+    if(targetItems[index] === null){
+      return;
+    }
+    params.append('new_value', targetItems[index]['value']);
+    params.append('key', targetItems[index]['key']);
+    params.append('before-todo', targetItems[index]['before-todo']);
+    params.append('after-todo', targetItems[index]['after-todo']);
+    params.append('type', 'update-todo');
+    axios.post('php/scheduleController.php', params).then(response => {
+      console.log(response.status);
+      console.log(response);
+    });
+  }
+
+  // This above should be one request
+  // Have to consider rolling back ?
+
 }
 // TODO need to change place of this method below
-var onChangeEvent = function (e, opt_isNewItem) {
+var onChangeEvent = function (e) {
   let params = new URLSearchParams();
   let targetURL;
   let inputKey = e.target.getAttribute('data-input-key');
   let action = '';
   let inputtedValue = null;
-  if(e.target.value === '' && !opt_isNewItem){
+  let targetItems = [];
+  if(e.target.value === ''){
     params.append('deletetodoid', inputKey);
     action = 'delete-';
+    //Something is needed to add
+    let targetItems = changeOrder(getItemData(postedData, parseInt(inputKey, 10)), 'delete');
+    for (let index = 0; index < targetItems.length; index++) {
+      if(targetItems[index] === null){
+        return;
+      }
+      params.append('new_value', targetItems[index]['value']);
+      params.append('key', targetItems[index]['key']);
+      params.append('before-todo', targetItems[index]['before-todo']);
+      params.append('after-todo', targetItems[index]['after-todo']);
+      params.append('type', 'update-todo');
+      axios.post('php/scheduleController.php', params).then(response => {
+        console.log(response.status);
+        console.log(response);
+      });
+    }
   }else{
     var targetIndex = null;
     for (let index = 0; index < postedData.length; index++) {
@@ -437,7 +475,7 @@ var taskList = Vue.extend({
       if($lastInput === e.target && this.isKeyPressed){
         let inputKey = parseInt(e.target.getAttribute('data-input-key'), 10);
         let previousLastData = this.postedData[this.postedData.length-1];
-        let newItemKey = String(inputKey + 1);
+        let newItemKey = inputKey + 1;
         previousLastData['after-todo'] = newItemKey;
         let params = new URLSearchParams();
         let targetURL = 'php/scheduleController.php'; // Need to be CONST
@@ -546,6 +584,7 @@ var taskList = Vue.extend({
             return;
           }
           let previousAfterTodoKey;
+          let targegetItemData(this.postedData, targetKey);
           for (let index = 0; index < this.postedData.length; index++) {
             if(this.postedData[index].key === targetKey){
               previousAfterTodoKey = this.postedData[index]['after-todo'];
@@ -697,5 +736,70 @@ function afterRendered(){
   var $table = document.getElementById("time-range-list-table");
   var $customList = document.getElementById("time-range-list");
   $table.appendChild($customList);
+}
+
+/**
+ * 
+ * @param {*} targetItemData 
+ * @param {*} changeType 
+ * @param {*} optionalItemData 
+ */
+function changeOrder(targetItemData, changeType, optionalItemData){
+  let beforeKey;
+  let afterKey;
+  let beforeItem;
+  let afterItem;
+ switch (changeType) {
+   case 'add':
+   break;
+
+   case 'delete':
+   beforeKey = parseInt(targetItemData['before-todo'], 10);
+   afterKey = parseInt(targetItemData['after-todo'], 10);
+   beforeItem = getItemData(postedData, beforeKey);
+   afterItem = getItemData(postedData, afterKey);
+
+   if(beforeItem){
+    beforeItem['after-todo'] = afterKey;
+   }
+   if(afterItem){
+    afterItem['before-todo'] = beforeKey;
+   }
+   return [beforeItem, afterItem];
+   break;
+
+   case 'uncheck':
+   beforeKey = parseInt(targetItemData['before-todo'], 10);
+   afterKey = parseInt(targetItemData['after-todo'], 10);
+   beforeItem = getItemData(postedData, beforeKey);
+   afterItem = getItemData(postedData, afterKey);
+
+   if(beforeItem){
+    beforeItem['after-todo'] = targetItemData['key'];
+   }
+   if(afterItem){
+    afterItem['before-todo'] = targetItemData['key'];
+   }
+   return [beforeItem, afterItem];
+   break;
+ 
+   default:
+   break;
+ } 
+}
+
+/**
+ * 
+ * @param {Array} data 
+ * @param {String} key 
+ */
+function getItemData(data, key){
+  let targetData = null;
+  data.forEach(item => {
+    if(item.key === key){
+      targetData = item;
+    }
+  });
+  return targetData;
 }
 
