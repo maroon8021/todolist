@@ -9,8 +9,10 @@ rowPostedData.forEach(data => {
   targetKey = data['before-todo'] === 0 ? data.key : targetKey;
 });
 for (let index = 0; index < Object.keys(postedDataObj).length; index++) {
-  postedData.push(postedDataObj[targetKey]);
-  targetKey = postedDataObj[targetKey]['after-todo'];
+  if(targetKey !== -1){
+    postedData.push(postedDataObj[targetKey]);
+    targetKey = postedDataObj[targetKey]['after-todo'];
+  }
 }
 
 
@@ -574,27 +576,60 @@ var taskList = Vue.extend({
       this.hoverClass = false;
       this.isHovered = false;
       var $targetElement = e.target;
+      let isChanged = false;
       for (let index = 0; index < 3; index++) { //TODO fix 3
         if($targetElement.tagName !== 'TR'){
           $targetElement = $targetElement.parentElement;
-        }else{
+        }else if(!isChanged){
+          isChanged = true;
           let $targetInput = $targetElement.querySelector('input');
-          let targetKey = parseInt($targetInput.dataset.inputKey, 10);
+          let targetKey = parseInt($targetInput.dataset.inputKey, 10); // This key means the key which is input replaced 
           if(this.hoveringTarget === targetKey){
             return;
           }
-          let previousAfterTodoKey;
-          let targegetItemData(this.postedData, targetKey);
-          for (let index = 0; index < this.postedData.length; index++) {
-            if(this.postedData[index].key === targetKey){
-              previousAfterTodoKey = this.postedData[index]['after-todo'];
-              this.postedData[index]['after-todo'] = this.hoveringTarget;
-              this.postedData[this.hoveringTarget]['before-todo'] = targetKey;
-              this.postedData[this.hoveringTarget]['after-todo'] = previousAfterTodoKey;
-              this.postedData[previousAfterTodoKey]['before-todo'] = this.hoveringTarget;
-            }
-          }
+          let hoveringItemData = getItemData(postedData, this.hoveringTarget);
+        
+          let previousBeforeTodoData = getItemData(postedData, hoveringItemData['before-todo']);
+          let previousAfterTodoData = getItemData(postedData, hoveringItemData['after-todo']);
 
+          let targetItemData = getItemData(postedData, targetKey);
+          let targetAfterItemData = getItemData(postedData, targetItemData['after-todo']);
+
+          previousBeforeTodoData['after-todo'] = hoveringItemData['after-todo'];
+          previousAfterTodoData['before-todo'] = hoveringItemData['before-todo'];
+
+          targetAfterItemData['before-todo'] = hoveringItemData['key'];
+          targetItemData['after-todo'] = hoveringItemData['key'];
+
+          hoveringItemData['before-todo'] = targetItemData['key'];
+          hoveringItemData['after-todo'] = targetAfterItemData['key'];
+
+          let updatedItemsData = [previousBeforeTodoData, previousAfterTodoData, targetAfterItemData, targetItemData, hoveringItemData];
+          let params;
+          for (let index = 0; index < updatedItemsData.length; index++) {
+            params = new URLSearchParams();
+            params.append('new_value', updatedItemsData[index]['value']);
+            params.append('key', updatedItemsData[index]['key']);
+            params.append('before-todo', updatedItemsData[index]['before-todo']);
+            params.append('after-todo', updatedItemsData[index]['after-todo']);
+            params.append('type', 'update-todo');
+            axios.post('php/scheduleController.php', params).then(response => {
+              console.log(response.status);
+              console.log(response);
+            });
+          }
+          
+          let nextKey = 0;
+          postedData = postedData.map(function(item, index, array){
+            for (let j = 0; j < array.length; j++) {
+              if(array[j]['key'] === nextKey || array[j]['before-todo'] === nextKey){
+                nextKey = array[j]['after-todo'];
+                return array[j];
+              }
+            }
+          });
+
+          /*
           let newKey = this.postedData[0].key === this.hoveringTarget ? this.postedData[0]['after-todo'] : this.postedData[0].key;
 
           for (let index = 0; index < this.postedData.length; index++) {
@@ -607,6 +642,7 @@ var taskList = Vue.extend({
             this.$set(this.postedData, index, this.postedData[newKey]);
             newKey = this.postedData[newKey]['after-todo'];
           }
+          */
 
         }
         
