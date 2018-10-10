@@ -577,6 +577,7 @@ var taskList = Vue.extend({
       this.isHovered = false;
       var $targetElement = e.target;
       let isChanged = false;
+      let vueInstance = this;
       for (let index = 0; index < 3; index++) { //TODO fix 3
         if($targetElement.tagName !== 'TR'){
           $targetElement = $targetElement.parentElement;
@@ -620,30 +621,26 @@ var taskList = Vue.extend({
           }
           
           let nextKey = 0;
-          postedData = postedData.map(function(item, index, array){
-            for (let j = 0; j < array.length; j++) {
-              if(array[j]['key'] === nextKey || array[j]['before-todo'] === nextKey){
-                nextKey = array[j]['after-todo'];
-                return array[j];
-              }
+          let itemData;
+          let newOrderData = [];
+          postedData.forEach(function(item, index, array){ 
+            if(nextKey === 0){
+              itemData = getItemData(array, nextKey, 'before-todo');
+            }else{
+              itemData = getItemData(array, nextKey);
             }
+
+            if(itemData === null){
+              throw new Error("itemData is null and cannot change data order");
+            }
+            nextKey = itemData['after-todo'];
+            newOrderData.push(itemData);
+            
           });
 
-          /*
-          let newKey = this.postedData[0].key === this.hoveringTarget ? this.postedData[0]['after-todo'] : this.postedData[0].key;
-
-          for (let index = 0; index < this.postedData.length; index++) {
-            if(index === 0){
-              this.postedData[newKey]['before-todo'] = 0;
-            }else if(index === this.postedData.length - 1){
-              this.postedData[newKey]['after-todo'] = -1;
-            }
-
-            this.$set(this.postedData, index, this.postedData[newKey]);
-            newKey = this.postedData[newKey]['after-todo'];
-          }
-          */
-
+          newOrderData.forEach(function(item, index){
+            vueInstance.$set(vueInstance.postedData, index, item);
+          });
         }
         
       }
@@ -827,12 +824,17 @@ function changeOrder(targetItemData, changeType, optionalItemData){
 /**
  * 
  * @param {Array} data 
- * @param {String} key 
+ * @param {Number} key
+ * @param {?String} opt_targetKey 'before-todo' or 'after-todo'  
  */
-function getItemData(data, key){
+function getItemData(data, key, opt_targetKey){
   let targetData = null;
   data.forEach(item => {
-    if(item.key === key){
+    if(opt_targetKey === 'before-todo' && item['before-todo'] === key){
+      targetData = item;
+    }else if(opt_targetKey === 'after-todo' && item['before-todo'] === key){
+      targetData = item;
+    }else if(item.key === key && !opt_targetKey){
       targetData = item;
     }
   });
