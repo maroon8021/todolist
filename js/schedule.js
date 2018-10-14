@@ -15,6 +15,8 @@ for (let index = 0; index < Object.keys(postedDataObj).length; index++) {
   }
 }
 
+let originalLoadedData = postedData.slice();
+let previousData = originalLoadedData.slice();
 
 // TODO need to change place of this method below
 var onClickButton = function (e) {
@@ -568,7 +570,7 @@ var taskList = Vue.extend({
             
           }
         }
-      }, 1000); //.bind(this)
+      }, 500); //.bind(this)
       //this.$emit('focused', e);
       e.preventDefault();
     },
@@ -578,7 +580,7 @@ var taskList = Vue.extend({
       var $targetElement = e.target;
       let isChanged = false;
       let vueInstance = this;
-      for (let index = 0; index < 3; index++) { //TODO fix 3
+      for (let index = 0; index < e.path.length; index++) {
         if($targetElement.tagName !== 'TR'){
           $targetElement = $targetElement.parentElement;
         }else if(!isChanged){
@@ -596,18 +598,29 @@ var taskList = Vue.extend({
           let targetItemData = getItemData(postedData, targetKey);
           let targetAfterItemData = getItemData(postedData, targetItemData['after-todo']);
 
-          previousBeforeTodoData['after-todo'] = hoveringItemData['after-todo'];
-          previousAfterTodoData['before-todo'] = hoveringItemData['before-todo'];
-
-          targetAfterItemData['before-todo'] = hoveringItemData['key'];
+          if(previousBeforeTodoData){ // If first todo, previousBeforeTodoData is null
+            previousBeforeTodoData['after-todo'] = hoveringItemData['after-todo'];
+          }
+          if(previousAfterTodoData){ // If last todo, previousAfterTodoData is null
+            previousAfterTodoData['before-todo'] = hoveringItemData['before-todo'];
+          } 
+          
+          if(targetAfterItemData){ // pattern of -1
+            targetAfterItemData['before-todo'] = hoveringItemData['key'];
+          }
           targetItemData['after-todo'] = hoveringItemData['key'];
 
           hoveringItemData['before-todo'] = targetItemData['key'];
-          hoveringItemData['after-todo'] = targetAfterItemData['key'];
+          if(targetAfterItemData && hoveringItemData['key'] !== targetAfterItemData['key']){
+            hoveringItemData['after-todo'] = targetAfterItemData['key']
+          }
 
           let updatedItemsData = [previousBeforeTodoData, previousAfterTodoData, targetAfterItemData, targetItemData, hoveringItemData];
           let params;
           for (let index = 0; index < updatedItemsData.length; index++) {
+            if(!updatedItemsData[index]){
+              return;
+            }
             params = new URLSearchParams();
             params.append('new_value', updatedItemsData[index]['value']);
             params.append('key', updatedItemsData[index]['key']);
@@ -806,13 +819,10 @@ function changeOrder(targetItemData, changeType, optionalItemData){
    afterKey = parseInt(targetItemData['after-todo'], 10);
    beforeItem = getItemData(postedData, beforeKey);
    afterItem = getItemData(postedData, afterKey);
+   
+   beforeItem['after-todo'] = beforeItem ? targetItemData['key'] : 0;
+   afterItem['before-todo'] = afterItem ? targetItemData['key'] : -1;
 
-   if(beforeItem){
-    beforeItem['after-todo'] = targetItemData['key'];
-   }
-   if(afterItem){
-    afterItem['before-todo'] = targetItemData['key'];
-   }
    return [beforeItem, afterItem];
    break;
  
